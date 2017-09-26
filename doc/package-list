@@ -1,3 +1,4 @@
+binnewitt.classification
 classification
 com.maxgarfinkel.suffixTree
 de.uni_koeln.spinfo.classification.applications
@@ -23,12 +24,19 @@ de.uni_koeln.spinfo.classification.zoneAnalysis.evaluation
 de.uni_koeln.spinfo.classification.zoneAnalysis.helpers
 de.uni_koeln.spinfo.classification.zoneAnalysis.preprocessing
 de.uni_koeln.spinfo.classification.zoneAnalysis.workflow
-de.uni_koeln.spinfo.information_extraction.bibbApplications
+de.uni_koeln.spinfo.information_extraction.bibb_applications
 de.uni_koeln.spinfo.information_extraction.data
 de.uni_koeln.spinfo.information_extraction.db_io
 de.uni_koeln.spinfo.information_extraction.evaluation
-de.uni_koeln.spinfo.information_extraction.patternGeneration
+de.uni_koeln.spinfo.information_extraction.extraction
+de.uni_koeln.spinfo.information_extraction.pattern_generation
 de.uni_koeln.spinfo.information_extraction.preprocessing
-de.uni_koeln.spinfo.information_extraction.workflow
+de.uni_koeln.spinfo.ml_classification.applications
+de.uni_koeln.spinfo.ml_classification.classifiers
+de.uni_koeln.spinfo.ml_classification.classifiers.model
+de.uni_koeln.spinfo.ml_classification.data
+de.uni_koeln.spinfo.ml_classification.evaluation
+de.uni_koeln.spinfo.ml_classification.preprocessing
+de.uni_koeln.spinfo.ml_classification.workflow
 information_extraction
 information_extraction.evaluation
