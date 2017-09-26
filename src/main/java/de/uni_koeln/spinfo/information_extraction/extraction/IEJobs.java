@@ -777,7 +777,7 @@ public class IEJobs {
 			if (lemma.length() == 0) {
 				break;
 			}
-			if (!Character.isLetter(s) && !Character.isDigit(s) && !(s == 'ยง')) {
+			if (!Character.isLetter(s) && !Character.isDigit(s) && !(s == 'ง')) {
 				lemma = lemma.substring(1);
 				lemma = lemma.trim();
 			}

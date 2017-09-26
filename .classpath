@@ -28,5 +28,56 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/poi-3.16.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://poi.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/poi-ooxml-3.16.jar" sourcepath="C:/Users/Johanna/Documents/javalibraries/poi-3.16/poi-ooxml-3.16.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://poi.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/ooxml-lib/xmlbeans-2.6.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://poi.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/ooxml-lib/curvesapi-1.04.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/lib/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/lib/commons-collections4-4.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/poi-examples-3.16.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://poi.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/poi-excelant-3.16.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://poi.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/poi-ooxml-schemas-3.16.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://poi.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/poi-3.16/poi-scratchpad-3.16.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://poi.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/jsoup-1.10.3.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://jsoup.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Johanna/Documents/javalibraries/mulan-1.5.0/mulan/dist/mulan.jar" sourcepath="C:/Users/Johanna/Documents/javalibraries/mulan-1.5.0/mulan/src">
+		<attributes>
+			<attribute name="javadoc_location" value="http://mulan.sourceforge.net/doc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

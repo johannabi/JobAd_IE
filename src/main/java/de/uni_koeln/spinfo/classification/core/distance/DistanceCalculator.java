@@ -21,7 +21,6 @@ public class DistanceCalculator {
 	 */
 	public static double getDistance(double[]a, double[] b, Distance distance){
 
-		
 		if(distance == Distance.EUKLID){
 			return getEuklideanDistance(a, b);
 		}
@@ -69,13 +68,24 @@ public class DistanceCalculator {
 		}
 		vecProduct =  Math.sqrt(vecProduct);
 		centProduct =  Math.sqrt(centProduct);
+		
 		double similarity = dotProduct/(vecProduct*centProduct);
+//		toReturn = Math.acos(similarity);
+//		toReturn = 1 - similarity;
+		
+		if(similarity > 1)
+			similarity = 1.0;
 		if(similarity >= 0){
 			toReturn = 1 - similarity;
 		}
 		else{
 			toReturn  = -similarity;
 		}
+//		if(toReturn == 0.0){
+//			for(int i = 0; i < a.length; i++){
+//				System.out.println(a[i] + " -- " + b[i]);
+//			}
+//		}
 		return toReturn;
 		
 	}

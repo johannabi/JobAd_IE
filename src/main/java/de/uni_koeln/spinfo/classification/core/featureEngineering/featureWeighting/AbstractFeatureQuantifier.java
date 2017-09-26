@@ -1,5 +1,6 @@
 package de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,10 @@ import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
  * @author jhermes
  *
  */
-public abstract class  AbstractFeatureQuantifier {
-	
+public abstract class  AbstractFeatureQuantifier implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
 	public int maxTF;
 	
 	//List of all feature-words

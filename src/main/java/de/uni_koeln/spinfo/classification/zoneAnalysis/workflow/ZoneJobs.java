@@ -193,8 +193,8 @@ public class ZoneJobs {
 		for (ClassifyUnit paragraph : paragraphs) {
 			// System.out.println(((ZoneClassifyUnit)
 			// paragraph).getActualClassID());
+			
 			ZoneClassifyUnit newParagraph = new ZoneClassifyUnit(paragraph.getContent(), paragraph.getID());
-		
 			newParagraph.setClassIDs(((ZoneClassifyUnit) paragraph).getClassIDs());
 			newParagraph.setActualClassID(((ZoneClassifyUnit) paragraph).getActualClassID());
 			List<String> tokens = tokenizer.tokenize(newParagraph.getContent());

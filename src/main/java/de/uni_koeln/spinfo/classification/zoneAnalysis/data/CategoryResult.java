@@ -55,6 +55,20 @@ public class CategoryResult implements Serializable{
 		this.fn++;
 	}
 	
+	public int getTP(){
+		return tp;
+	}
+	
+	public int getFP(){
+		return fp;
+	}
+	public int getFN(){
+		return fn;
+	}
+	public int getTN(){
+		return tn;
+	}
+	
 	
 	/**
 	 * @param ev - evaluationvalue type
@@ -110,4 +124,6 @@ public class CategoryResult implements Serializable{
 		sb.append("result of class "+ categoryID+": \n   recall: "+ getRecall()+"\n   precision: " + getPrecision()+ "\n   accuracy: "+ getAccuracy()+"\n   F1Score "+ getF1Score()+ "\n\n");
 		return sb.toString();
 	}
+
+
 }

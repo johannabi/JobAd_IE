@@ -13,8 +13,6 @@ import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
  */
 public class TFIDFFeatureQuantifier extends AbstractFeatureQuantifier{
 	
-	
-
 
 	
 	@Override
@@ -24,7 +22,8 @@ public class TFIDFFeatureQuantifier extends AbstractFeatureQuantifier{
 			this.featureUnitOrder = getFeatureUnitOrder(classifyUnits);
 		}
 		
-		Map<String, Integer> docFrequencies = calcDocFrequencies(this.featureUnitOrder);
+		Map<String, Integer> docFrequencies = calcDocFrequencies(this.featureUnitOrder, classifyUnits);
+		
 		for (ClassifyUnit unitToClassify : classifyUnits) {
 			Map<String, Integer> termFrequencies = getTermFrequencies(unitToClassify.getFeatureUnits());
 			double[] vector = new double[this.featureUnitOrder.size()];
@@ -45,6 +44,30 @@ public class TFIDFFeatureQuantifier extends AbstractFeatureQuantifier{
 	}
 	
 	
+
+	/**
+	 * @author Johanna
+	 * @param featureUnitOrder
+	 * @param classifyUnits
+	 * @return
+	 */
+	private Map<String, Integer> calcDocFrequencies(List<String> featureUnitOrder, List<ClassifyUnit> classifyUnits) {
+		Map<String, Integer> toReturn = new TreeMap<String,Integer>();
+		
+		for (String feature : featureUnitOrder){
+			for(ClassifyUnit cu : classifyUnits){
+				if(cu.getFeatureUnits().contains(feature)){
+					Integer df = 0;
+					if(toReturn.containsKey(feature)) 
+						df = toReturn.get(feature);
+					toReturn.put(feature, df + 1);
+				}
+			}
+		}
+		return toReturn;
+	}
+
+
 
 	private Map<String, Integer> calcDocFrequencies(List<String> featureUnitOrder) {
 		Map<String, Integer> toReturn = new TreeMap<String, Integer>();

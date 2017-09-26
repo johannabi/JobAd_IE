@@ -3,7 +3,9 @@ package de.uni_koeln.spinfo.classification.core.classifier.model;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uni_koeln.spinfo.classification.core.classifier.AbstractClassifier;
 import de.uni_koeln.spinfo.classification.core.data.FeatureUnitConfiguration;
@@ -51,7 +53,7 @@ public  class Model implements Serializable{
 	private String fQName;
 	
 	
-	
+	private Map<Map<String, Boolean>, Integer> combiCount = new HashMap<Map<String, Boolean>, Integer>();
 	
 	
 	/**
@@ -158,5 +160,19 @@ public  class Model implements Serializable{
 	
 	public  AbstractClassifier getClassifier(){
 		return null;
+	}
+
+
+	/**
+	 * returns Focus-Combinations and their count
+	 * @return
+	 */
+	public Map<Map<String, Boolean>, Integer> getCombiCount(){
+		return combiCount;
+	}
+
+	public void setCombiCount(Map<Map<String, Boolean>, Integer> combiCount) {
+		this.combiCount = combiCount;
+		
 	}
 }

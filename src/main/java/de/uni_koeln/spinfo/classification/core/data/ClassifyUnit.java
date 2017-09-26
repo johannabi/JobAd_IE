@@ -1,5 +1,6 @@
 package de.uni_koeln.spinfo.classification.core.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,9 +12,13 @@ import java.util.UUID;
  *
  */
 
-public class ClassifyUnit {
+public class ClassifyUnit implements Serializable{
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected String content;
 	protected UUID id;
 	/**

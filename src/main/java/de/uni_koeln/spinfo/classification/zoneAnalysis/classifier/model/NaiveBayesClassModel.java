@@ -18,6 +18,8 @@ public class NaiveBayesClassModel implements Serializable{
 	private int membersInClass;
 	private int membersNotInClass;
 	
+	private String focusName;
+	
 	
 	
 	/**
@@ -79,5 +81,12 @@ public class NaiveBayesClassModel implements Serializable{
 	 */
 	public void setNotInClassDFs(Map<String, Integer> notInClassDFs) {
 		this.notInClassDFs = notInClassDFs;
+	}
+	public void setFocusName(String focus) {
+		this.focusName = focus;
+	}
+	
+	public String getFocusName(){
+		return focusName;
 	}
 }

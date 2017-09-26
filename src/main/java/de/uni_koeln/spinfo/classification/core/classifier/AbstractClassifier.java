@@ -1,6 +1,7 @@
 package de.uni_koeln.spinfo.classification.core.classifier;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 import de.uni_koeln.spinfo.classification.core.classifier.model.Model;
@@ -18,8 +19,10 @@ import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighti
  *contains basic functionality of a classifier
  *
  */
-public abstract class AbstractClassifier {
+public abstract class AbstractClassifier implements Serializable {
 	
+
+	private static final long serialVersionUID = 1L;
 	protected String classifierConfig;
 	protected Distance distance;
 	

@@ -13,8 +13,8 @@ import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 public class AbsoluteFrequencyFeatureQuantifier extends AbstractFeatureQuantifier{
 
 
+	private static final long serialVersionUID = 1L;
 
-	
 	@Override
 	public void setFeatureValues(List<ClassifyUnit> classifyUnits, List<String> featureUnitOrder){
 		this.featureUnitOrder = featureUnitOrder;

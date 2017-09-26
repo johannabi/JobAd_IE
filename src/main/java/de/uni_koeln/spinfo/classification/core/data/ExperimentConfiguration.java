@@ -1,7 +1,9 @@
 package de.uni_koeln.spinfo.classification.core.data;
 
 import java.io.File;
+import java.io.Serializable;
 
+import de.uni_koeln.spinfo.ml_classification.classifiers.FocusMLKNNClassifier;
 import de.uni_koeln.spinfo.classification.core.classifier.AbstractClassifier;
 import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.AbstractFeatureQuantifier;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.classifier.WekaClassifier;
@@ -12,8 +14,12 @@ import de.uni_koeln.spinfo.classification.zoneAnalysis.classifier.WekaClassifier
  * stores all config-paramters of an experiment including the Classifier, FeatureQuantifer and FeatureUnitConfiguration and Modelfile
  *
  */
-public class ExperimentConfiguration {
+public class ExperimentConfiguration implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private FeatureUnitConfiguration fuc;
 	private AbstractFeatureQuantifier fq;
 	private AbstractClassifier classifier;
@@ -138,6 +144,9 @@ public class ExperimentConfiguration {
 		}
 		else{
 			buff.append(classifier.getClass().getSimpleName());
+		}
+		if(classifier instanceof FocusMLKNNClassifier){
+			buff.append(((FocusMLKNNClassifier) classifier).getK());
 		}
 		if (classifier.getDistance() != null) {
 			buff.append("_");

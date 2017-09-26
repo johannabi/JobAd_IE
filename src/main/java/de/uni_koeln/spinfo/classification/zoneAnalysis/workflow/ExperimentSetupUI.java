@@ -100,6 +100,7 @@ public class ExperimentSetupUI {
 			}
 			if (answer.toLowerCase().equals("n")) {
 				model = chooseModel(in, outputFolderName);
+				
 				if(model == null){
 					getExperimentConfiguration(dataFileName);
 				}
@@ -110,8 +111,9 @@ public class ExperimentSetupUI {
 			}
 			System.out.println("invalid answer! please try again...");
 			System.out.println();
+			
 			getExperimentConfiguration(dataFileName);
-		}
+		} 
 		// get ExperimnentConfig
 		if(!(classifier instanceof ZoneNaiveBayesClassifier) && !(classifier instanceof SVMClassifier)){
 			Distance dist = getDistance(in);

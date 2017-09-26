@@ -8,19 +8,22 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import de.uni_koeln.spinfo.ml_classification.data.FocusClassifyUnit;
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 import de.uni_koeln.spinfo.classification.core.data.FeatureUnitConfiguration;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ZoneClassifyUnit;
-
+/**
+ * Filters FeatureUnits according to their Mutual Information values. TODO
+ * what about multiclass units?
+ * 
+ * @author geduldig
+ * 
+ */
 public class MutualInformationFilter {
 
-	/**
-	 * Filters FeatureUnits according to their Mutual Information values. TODO
-	 * what about multiclass units?
-	 * 
-	 * @author geduldig
-	 * 
-	 */
+
+	
+	private List<String> focusList;
 
 	private Map<String, Integer> allTFs;
 	private Map<String, Integer> relevantTFs;
@@ -30,21 +33,37 @@ public class MutualInformationFilter {
 	private int classifyUnitsInCategory = 0;
 
 	Set<String> relevantFeatureUnitsOverall;
-	
-	
-	
 
-	
-	public void initialize(FeatureUnitConfiguration fuc, List<ClassifyUnit> trainingdata){
-	
-		int numberOfClasses = ( (ZoneClassifyUnit) trainingdata.get(0)).getClassIDs().length;
+	public MutualInformationFilter(List<String> focusList) {
+		this.focusList = focusList;
+	}
 
+	public MutualInformationFilter() {
+
+	}
+	
+	public void initialize(FeatureUnitConfiguration fuc, List<ClassifyUnit> trainingData, List<String> focusList) {
+		this.focusList = focusList;
+		initialize(fuc, trainingData);
+		
+	}
+
+	public void initialize(FeatureUnitConfiguration fuc, List<ClassifyUnit> trainingdata) {
+		int numberOfClasses = 0;
+		int limit = 0;
+		if (trainingdata.get(0) instanceof FocusClassifyUnit){
+			numberOfClasses = ((FocusClassifyUnit) trainingdata.get(0)).getInFocus().size();
+			limit = numberOfClasses;
+		}else{
+			numberOfClasses = ((ZoneClassifyUnit) trainingdata.get(0)).getClassIDs().length;
+			limit = numberOfClasses - 1;
+		}
 		relevantFeatureUnitsOverall = new TreeSet<String>();
 
-		for (int classID = 0; classID < numberOfClasses - 1; classID++) {
-			
+		for (int classID = 0; classID < limit; classID++) {
+
 			totalNumberOfClassifyUnits = trainingdata.size();
-			
+
 			// alle für die Klasse relevanten Wörter
 			Set<String> relevantFeatureUnits4Class = new TreeSet<String>();
 
@@ -55,13 +74,18 @@ public class MutualInformationFilter {
 			List<String> allFeatureUnitsOfClass = new LinkedList<String>();
 
 			for (ClassifyUnit unitToClassify : trainingdata) {
-				totalNumberOfFeatureUnits += unitToClassify.getFeatureUnits()
-						.size();
+				totalNumberOfFeatureUnits += unitToClassify.getFeatureUnits().size();
 				allFeatureUnits.addAll(unitToClassify.getFeatureUnits());
-				if (((ZoneClassifyUnit) unitToClassify).getClassIDs()[classID]) {
+				Boolean inClass;
+				if(unitToClassify instanceof FocusClassifyUnit){
+					inClass = ((FocusClassifyUnit) unitToClassify).getInFocus().get(focusList.get(classID));
+				}
+					
+				else
+					inClass = ((ZoneClassifyUnit) unitToClassify).getClassIDs()[classID];
+				if (inClass) {
 					classifyUnitsInCategory++;
-					allFeatureUnitsOfClass.addAll(unitToClassify
-							.getFeatureUnits());
+					allFeatureUnitsOfClass.addAll(unitToClassify.getFeatureUnits());
 				}
 			}
 			// alle TermFrequenzen des gesamten Corpus
@@ -73,8 +97,7 @@ public class MutualInformationFilter {
 				// CalcMIs
 				double t = (allTFs.get(term) / (double) totalNumberOfFeatureUnits);
 				double c = (classifyUnitsInCategory / (double) totalNumberOfClassifyUnits);
-				double tANDc = relevantTFs.get(term)
-						/ (double) totalNumberOfFeatureUnits;
+				double tANDc = relevantTFs.get(term) / (double) totalNumberOfFeatureUnits;
 				double MI = (tANDc * (Math.log(tANDc / (t * c))));
 				Set<String> terms = MIs.get(MI);
 				if (terms == null) {
@@ -88,13 +111,13 @@ public class MutualInformationFilter {
 			int miScore = fuc.getMiScore();
 			for (int i = reverseList.size() - 1; i >= 0; i--) {
 				relevantFeatureUnits4Class.addAll(MIs.get(reverseList.get(i)));
-				 if (relevantFeatureUnits4Class.size() >=
-				 miScore)
-				 break;
+				if (relevantFeatureUnits4Class.size() >= miScore)
+					break;
 			}
 			relevantFeatureUnitsOverall.addAll(relevantFeatureUnits4Class);
 
 		}
+		System.out.println("RelevantFUsOverall " + relevantFeatureUnitsOverall.size());
 	}
 
 	/**
@@ -108,7 +131,7 @@ public class MutualInformationFilter {
 	 */
 
 	public void filter(List<ClassifyUnit> cus, int miScore) {
-		
+
 		List<ClassifyUnit> emptyCUs = new ArrayList<ClassifyUnit>();
 
 		for (ClassifyUnit unitToClassify : cus) {
@@ -138,5 +161,7 @@ public class MutualInformationFilter {
 		}
 		return tfs;
 	}
+
+
 
 }
