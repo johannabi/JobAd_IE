@@ -1,0 +1,104 @@
+package de.uni_koeln.spinfo.ml_classification.workflow;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import de.uni_koeln.spinfo.ml_classification.classifiers.KeywordClassifier;
+import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
+import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
+import de.uni_koeln.spinfo.classification.core.data.ExperimentConfiguration;
+
+public class FocusSingleExperimentExecutor {
+
+	public static MLExperimentResult crossValidate(ExperimentConfiguration expConfig, FocusJobs jobs, boolean preClassify,
+			List<String> evaluationCategories, File focusesFile, Boolean safeUnused) throws IOException {
+		long before = System.nanoTime();
+		// prepare classifyUnits...
+		List<ClassifyUnit> paragraphs = null;
+		paragraphs = jobs.getCategorizedAdsFromFile(expConfig.getDataFile(),
+				expConfig.getFeatureConfiguration().isTreatEncoding(), focusesFile, safeUnused);
+
+		System.out.println(paragraphs.size() + " JobsAds in training data");
+		long after = System.nanoTime();
+//		System.out.println("prepare CUs: " + (after - before) / 1000000000d);
+		before = System.nanoTime();
+		paragraphs = jobs.initializeClassifyUnits(paragraphs, true);
+		after = System.nanoTime();
+//		System.out.println("initialize CUs: " + (after - before) / 1000000000d);
+		before = System.nanoTime();
+		paragraphs = jobs.setFeatures(paragraphs, expConfig.getFeatureConfiguration(), true);
+
+		after = System.nanoTime();
+//		System.out.println("setFeatures: " + (after - before) / 1000000000d);
+		before = System.nanoTime();
+		paragraphs = jobs.setFeatureVectors(paragraphs, expConfig.getFeatureQuantifier(), null);
+		System.out.println(paragraphs.get(0).getFeatureVector().length);
+		System.out.println(paragraphs.get(100).getFeatureVector().length);
+		after = System.nanoTime();
+//		System.out.println("set Vectors: " + (after - before) / 1000000000d);
+		// preclassify
+		// analyze focus combinations
+//		Map<Map<String, Boolean>, Integer> combiCount = Evaluator.analyzeCombinations(paragraphs, 1);
+
+		Map<ClassifyUnit, Map<String, Double>> preClassified = new HashMap<ClassifyUnit, Map<String, Double>>();
+		if (preClassify) {
+			before = System.nanoTime();
+			Map<String,List<String>> keywords = Util.prepareKeywords(jobs.getKeywords(), expConfig.getFeatureConfiguration());
+			KeywordClassifier kc = new KeywordClassifier(keywords);
+			for (ClassifyUnit cu : paragraphs) {
+				// alles auf null gesetzt, was nicht gebraucht wird
+				Map<String, Double> labelRanking = kc.classify(cu); 
+				preClassified.put(cu, labelRanking);
+			}
+			after = System.nanoTime();
+//			System.out.println("preClassify: " + (after - before) / 1000000000d);
+		}
+
+		// classify
+		before = System.nanoTime();
+		Map<ClassifyUnit, Map<String, Boolean>> classified = jobs.crossvalidate(paragraphs, expConfig);
+		after = System.nanoTime();
+//		System.out.println("crossvalidate: " + (after - before) / 1000000000d);
+
+		// merge results
+		if (preClassify) { 
+			before = System.nanoTime();
+			classified = jobs.mergeResults(classified, preClassified);
+			after = System.nanoTime();
+//			System.out.println("merge: " + (after - before) / 1000000000d);
+		}
+
+		// serialize
+//		FileOutputStream fos = new FileOutputStream("classified.ser");
+//		ObjectOutputStream oos = new ObjectOutputStream(fos);
+//		oos.writeObject(classified);
+//		fos.close();
+//		oos.close();
+//		fos = new FileOutputStream("evaluationCategories.ser");
+//		oos = new ObjectOutputStream(fos);
+//		oos.writeObject(evaluationCategories);
+//		fos.close();
+//		oos.close();
+//		fos = new FileOutputStream("expConfig.ser");
+//		oos = new ObjectOutputStream(fos);
+//		oos.writeObject(expConfig);
+//		fos.close();
+//		oos.close();
+		
+		// evaluate
+		before = System.nanoTime();
+		MLExperimentResult result = jobs.evaluateML(classified, evaluationCategories, expConfig);
+		after = System.nanoTime();
+//		System.out.println("evaluate: " + (after - before) / 1000000000d);
+		before = System.nanoTime();
+		Map<ClassifyUnit, Map<String, Boolean>> misClassified = result.getMisclassified();
+		Util.exportmisclassifiedtoXLSX("misclassified.xlsx", misClassified);
+//		System.out.println("export mis-classified: " + (after - before) / 1000000000d);
+		after = System.nanoTime();
+		return result;
+	}
+
+}
