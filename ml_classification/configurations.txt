@@ -1,0 +1,15 @@
+inputFile:ml_classification/input/toAnnotate.xlsx
+outputFolder:ml_classification/output
+trainingFile:ml_classification/data/trainingSets/training_greatminus10.xlsx
+focusesFile:ml_classification/data/focuses.xlsx
+ignoreStopwords:true
+normalizeInput:true
+useStemmer:true
+nGrams:3
+distance:cosinus
+threshold:0.5
+knnValue:13
+allowemptylabelmap:
+output:ranking
+classifier:mlknn
+quantifier:loglikelihood
