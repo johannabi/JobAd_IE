@@ -161,6 +161,14 @@ public class FocusJobs {
 		return toProcess;
 	}
 
+	/**
+	 * selects features for each ClassifyUnit according to the given FeatureUnitConfiguration
+	 * @param trainingData contains all data
+	 * @param fuc contains the given configuration to create features
+	 * @param trainingPhase set true, if it's the training data, so the list of all tokens
+	 * will be set
+	 * @return ClassifyUnits with feature sets
+	 */
 	public List<ClassifyUnit> setFeatures(List<ClassifyUnit> trainingData, FeatureUnitConfiguration fuc,
 			boolean trainingPhase) {
 
@@ -202,6 +210,13 @@ public class FocusJobs {
 
 	}
 
+	/**
+	 * sets feature weighting according to the given feature quantifier
+	 * @param trainingData all data the should receive a feature vector
+	 * @param fq feature quantifier to weight features
+	 * @param featureUnitOrder list of features that should be weighted
+	 * @return ClassifyUnits that contain weighted feature vectors
+	 */
 	public List<ClassifyUnit> setFeatureVectors(List<ClassifyUnit> trainingData, AbstractFeatureQuantifier fq,
 			List<String> featureUnitOrder) {
 		if (fq != null) {
@@ -263,6 +278,13 @@ public class FocusJobs {
 		return model;
 	}
 
+	/**
+	 * creates FocusClassifyUnits for each Job Ad that should be classified
+	 * @param dataToAnnotate Job Ads
+	 * @param treatEncoding
+	 * @return List of FocusClassifyUnit that should be classified
+	 * @throws IOException
+	 */
 	public List<FocusClassifyUnit> getNewAdsFromFile(File dataToAnnotate, boolean treatEncoding) throws IOException {
 
 		List<FocusClassifyUnit> toAnnotate = new ArrayList<FocusClassifyUnit>();
@@ -293,6 +315,11 @@ public class FocusJobs {
 		return toAnnotate;
 	}
 
+	/**
+	 * deletes html tags from a String
+	 * @param jobAdContent
+	 * @return
+	 */
 	private String deleteHTML(String jobAdContent) {
 		String[] lines = jobAdContent.split("\n");
 		StringBuffer sb = new StringBuffer();
@@ -343,6 +370,14 @@ public class FocusJobs {
 		return classified;
 	}
 
+	/**
+	 * exports classified Data to .xlsx-File
+	 * @param classifiedFocus
+	 * @param outputFile
+	 * @param outputRanking set true, if ranking vector should be written, set
+	 *  false if definite labels should be written
+	 * @throws IOException
+	 */
 	public void exportClassifiedData(Map<ClassifyUnit, Map<String, Boolean>> classifiedFocus, File outputFile,
 			boolean outputRanking) throws IOException {
 
@@ -426,6 +461,14 @@ public class FocusJobs {
 			return "";
 	}
 
+	/**
+	 * cross validates the given experiment configurations with the given ClassifyUnits
+	 * Number of cross-validation groups is 10
+	 * @param paragraphs
+	 * @param expConfig
+	 * @return
+	 * @throws IOException
+	 */
 	public Map<ClassifyUnit, Map<String, Boolean>> crossvalidate(List<ClassifyUnit> paragraphs,
 			ExperimentConfiguration expConfig) throws IOException {
 		// build crossvalidationgroups...
@@ -453,6 +496,13 @@ public class FocusJobs {
 		return classified;
 	}
 
+	/**
+	 * evaluates the classified Job Ads with the given categories
+	 * @param classified
+	 * @param categories
+	 * @param expConfig
+	 * @return
+	 */
 	public MLExperimentResult evaluateML(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> categories,
 			ExperimentConfiguration expConfig) {
 		MLEvaluator evaluator = new MLEvaluator();
@@ -483,6 +533,13 @@ public class FocusJobs {
 		return er;
 	}
 
+	/**
+	 * serializes the given ExperimentResults
+	 * @param ers
+	 * @param outputFolder
+	 * @return
+	 * @throws IOException
+	 */
 	public File persistExperimentResults(List<ExperimentResult> ers, File outputFolder) throws IOException {
 		if (!outputFolder.exists()) {
 			outputFolder.mkdirs();
@@ -520,6 +577,13 @@ public class FocusJobs {
 
 	}
 
+	/**
+	 * serializes the given ExperimentResult
+	 * @param er
+	 * @param outputFolder
+	 * @return
+	 * @throws IOException
+	 */
 	public File persistExperimentResult(ExperimentResult er, File outputFolder) throws IOException {
 		if (!outputFolder.exists()) {
 			outputFolder.mkdirs();
@@ -546,9 +610,15 @@ public class FocusJobs {
 		return file;
 	}
 
+	/**
+	 * combines the result of pre-classifier and classifier
+	 * @param classified
+	 * @param preClassified
+	 * @return
+	 */
 	public Map<ClassifyUnit, Map<String, Boolean>> mergeResults(Map<ClassifyUnit, Map<String, Boolean>> classified,
 			Map<ClassifyUnit, Map<String, Double>> preClassified) {
-		// TODO richtig machen. hilft im Moment kein bisschen...
+		// TODO improve....
 		Map<ClassifyUnit, Map<String, Boolean>> toReturn = new HashMap<ClassifyUnit, Map<String, Boolean>>();
 
 		for (Map.Entry<ClassifyUnit, Map<String, Boolean>> e : classified.entrySet()) {
@@ -590,6 +660,13 @@ public class FocusJobs {
 		return toReturn;
 	}
 
+	/**
+	 * analyzes the trainingData in terms of label distributions
+	 * and label combinations.
+	 * 
+	 * @param data
+	 * @return String with results
+	 */
 	public String analyzeData(List<ClassifyUnit> data) {
 		StringBuilder result = new StringBuilder();
 		/** frequency distribution of focuses per classify unit */
@@ -703,6 +780,12 @@ public class FocusJobs {
 		return result.toString();
 	}
 
+	/**
+	 * exports evaluation results to .xlsx-File
+	 * @param results
+	 * @param folder
+	 * @throws IOException
+	 */
 	public void exportResults(List<ExperimentResult> results, File folder) throws IOException {
 
 		String[] headRow = new String[21];
@@ -724,7 +807,7 @@ public class FocusJobs {
 		headRow[14] = "Distance";
 		headRow[15] = "Quantifier";
 		headRow[16] = "NGrams";
-		headRow[17] = "AllowEmpty";
+		headRow[17] = "Mi-Score";
 		headRow[18] = "NoStopwords";
 		headRow[19] = "Normalized";
 		headRow[20] = "Stemmed";

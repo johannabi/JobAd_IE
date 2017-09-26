@@ -11,8 +11,21 @@ import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 import de.uni_koeln.spinfo.classification.core.data.ExperimentConfiguration;
 
+
 public class FocusSingleExperimentExecutor {
 
+	/**
+	 * cross validates the given experiment configurations
+	 * @param expConfig experiment configurations including the training data
+	 * @param jobs object that contains methods to process the data
+	 * @param preClassify set true if jobAds should be pre-classified with keyword classifier
+	 * @param evaluationCategories list of labels that should be recognized in evaluation 
+	 * (set null, if all should influence the evaluation)
+	 * @param focusesFile file with labels for classification
+	 * @param safeUnused set true if unusable jobAds should be collected in a file
+	 * @return result of cross validation
+	 * @throws IOException
+	 */
 	public static MLExperimentResult crossValidate(ExperimentConfiguration expConfig, FocusJobs jobs, boolean preClassify,
 			List<String> evaluationCategories, File focusesFile, Boolean safeUnused) throws IOException {
 		long before = System.nanoTime();
@@ -35,8 +48,6 @@ public class FocusSingleExperimentExecutor {
 //		System.out.println("setFeatures: " + (after - before) / 1000000000d);
 		before = System.nanoTime();
 		paragraphs = jobs.setFeatureVectors(paragraphs, expConfig.getFeatureQuantifier(), null);
-		System.out.println(paragraphs.get(0).getFeatureVector().length);
-		System.out.println(paragraphs.get(100).getFeatureVector().length);
 		after = System.nanoTime();
 //		System.out.println("set Vectors: " + (after - before) / 1000000000d);
 		// preclassify
