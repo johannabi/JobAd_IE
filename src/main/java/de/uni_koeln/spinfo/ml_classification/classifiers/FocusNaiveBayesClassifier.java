@@ -15,11 +15,13 @@ import de.uni_koeln.spinfo.classification.core.data.FeatureUnitConfiguration;
 import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.AbstractFeatureQuantifier;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.classifier.model.NaiveBayesClassModel;
 
+/**
+ * represents a naive bayes classifier
+ * @author Johanna
+ *
+ */
 public class FocusNaiveBayesClassifier extends FocusAbstractClassifier {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private double threshold = 0.5;
@@ -36,8 +38,6 @@ public class FocusNaiveBayesClassifier extends FocusAbstractClassifier {
 	public Model buildModel(List<ClassifyUnit> cus, FeatureUnitConfiguration fuc, AbstractFeatureQuantifier fq,
 			File trainingDataFile) {
 		Model model = new FocusNaiveBayesModel();
-
-		// TODO model für jedes "nicht in Fokus" bauen?
 		// für jeden Fokus prüfen welche cus drin sind und welche nicht bzw
 		// welche Features drin sind und welche nicht
 		Set<String> focuses = ((FocusClassifyUnit) cus.get(0)).getInFocus().keySet();
@@ -64,7 +64,7 @@ public class FocusNaiveBayesClassifier extends FocusAbstractClassifier {
 					}
 				} else {
 					membersNotInFocus++;
-					// TODO notInFocusDF ++
+
 					for (String fu : uniqueFUs) {
 						int df = 0;
 						if (notInFocusDF.containsKey(fu))

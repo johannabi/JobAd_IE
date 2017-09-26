@@ -21,6 +21,14 @@ import de.uni_koeln.spinfo.ml_classification.classifiers.FocusNaiveBayesClassifi
 import de.uni_koeln.spinfo.ml_classification.workflow.FocusJobs;
 import de.uni_koeln.spinfo.ml_classification.workflow.Util;
 
+/**
+ * application to classify focuses of new job ads. Configurations
+ * for classification can be written in ml_classification/configurations.txt
+ * possible configurations are listed (in german) 
+ * in ml_classification/configurations_manual.pdf
+ * @author Johanna
+ *
+ */
 public class JobAdClassificationApp {
 
 	/////////////////////////////
@@ -122,6 +130,10 @@ public class JobAdClassificationApp {
 		jobs.exportClassifiedData(classifiedFocus, outputFile, outputRanking);
 	}
 
+	/**
+	 * generates configurations from configurations file
+	 * @throws IOException
+	 */
 	private static void initialize() throws IOException {
 
 		String[] config = Util.getConfigurations(configPath, 15);

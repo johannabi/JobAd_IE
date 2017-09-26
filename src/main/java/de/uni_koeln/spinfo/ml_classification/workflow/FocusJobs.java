@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -822,8 +820,6 @@ public class FocusJobs {
 		if (!file.exists()) {
 			file.createNewFile();
 		}
-//		OutputStream os = new FileOutputStream(file);
-//		PrintWriter out = new PrintWriter(os);
 		
 		XSSFWorkbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet("Misclassified");
@@ -835,11 +831,7 @@ public class FocusJobs {
 			cell = row.createCell(i);
 			cell.setCellValue(headRow[i]);
 		}
-		
 
-//		for (int i = 0; i < headRow.length; i++) {
-//			out.print(headRow[i] + "\t");
-//		}
 
 		for (ExperimentResult result : results) {
 			MLExperimentResult mer = (MLExperimentResult) result;
@@ -847,32 +839,10 @@ public class FocusJobs {
 			
 			row = Util.createRow(mer, row);
 
-			
-//			out.print(f.format(mer.getMacroAveraging().get("Macro Precision: ")) + "\t");
-//			out.print(f.format(mer.getMacroAveraging().get("Macro Recall: ")) + "\t");
-//			out.print(f.format(mer.getMacroAveraging().get("Macro F1: ")) + "\t");
-//			out.print(f.format(mer.getMicroAveraging().get("Micro Precision: ")) + "\t");
-//			out.print(f.format(mer.getMicroAveraging().get("Micro Recall: ")) + "\t");
-//			out.print(f.format(mer.getMicroAveraging().get("Micro F1: ")) + "\t");
-//
-//			out.print(f.format(mer.getAverPrec()) + "\t");
-//			out.print(f.format(mer.getAverRec()) + "\t");
-//			out.print(f.format(mer.getAverF1()) + "\t");
-//			out.print(f.format(mer.getClassificationAccuracy()) + "\t");
-//
-//			out.print(f.format(mer.getHammingLoss()) + "\t");
-//			out.print(f.format(mer.getOneError()) + "\t");
-//			out.print(f.format(mer.getCoverage()) + "\t");
-//
-//			out.print(Util.makePrettyExperimentConf(mer.getExperimentConfiguration()));
-//			out.print(mer.getID() + "\t");
-//			out.println();
 		}
 		FileOutputStream fos = new FileOutputStream(fileName);
 		wb.write(fos);
 		wb.close();
-//		out.flush();
-//		out.close();
 
 	}
 

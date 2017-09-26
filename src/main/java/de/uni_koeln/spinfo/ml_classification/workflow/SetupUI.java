@@ -26,7 +26,7 @@ import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighti
 import de.uni_koeln.spinfo.classification.zoneAnalysis.classifier.svm.SVMClassifier;
 
 /**
- * vollst√§ndig "kopiert" von ExperimentSetupUI
+ * vollst‰ndig "kopiert" von ExperimentSetupUI
  * nur die Classifiers angepasst...
  * @author Johanna
  *

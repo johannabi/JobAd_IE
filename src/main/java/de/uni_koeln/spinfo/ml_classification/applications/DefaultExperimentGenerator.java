@@ -25,17 +25,17 @@ import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ExperimentResult;
 
 /**
  * 
- * @author Johanna
  * 
- * Executes a lot of experiments and stores experiment results in
- * classification/output/defaultResult
- * you can rank the results afterwars with RankResultsApplication.java
+ * Executes a lot of experiments and serializes them. Stores experiment results in
+ * ml_classification/output/evaluation/defaultResult
+ * you can rank the results afterwards with RankResultsApplication.java
+ * In addition, exports experiment results as .xlsx-File
  */
 public class DefaultExperimentGenerator {
 	
 	// APP-CONFIGURATION
 	
-	static File trainingDataFile = new File("ml_classification/data/trainingSets/getIn_JobAdDB_great.xlsx");
+	static File trainingDataFile = new File("ml_classification/data/trainingSets/JobAdDB_small.xlsx");
 
 	static File resultsOutputFile = new File("ml_classification/output/evaluation/defaultResults/17_09_21_preClassifiedCSV");
 
@@ -45,7 +45,7 @@ public class DefaultExperimentGenerator {
 
 	static String outputFolder = "ml_classification/output";
 	
-	static File focusesFile = new File("ml_classification/data/getIn_focuses.xlsx");
+	static File focusesFile = new File("ml_classification/data/focuses.xlsx");
 	
 	static List<String> evaluationCategories;
 	
@@ -56,21 +56,14 @@ public class DefaultExperimentGenerator {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException{
 		
-//		evaluationCategories = new ArrayList<String>();
-//		evaluationCategories.add("Administration");
-//		evaluationCategories.add("BeratungConsulting");
-//		evaluationCategories.add("RiskComplianceManagement");
-//		evaluationCategories.add("DatenbankentwicklungBI");
-//		evaluationCategories.add("QualityAssurance");
-//		evaluationCategories.add("Webentwicklung");
-//		evaluationCategories.add("Anwendungsentwicklung");
-//		evaluationCategories.add("Projektmanagement");
 
 		FocusJobs jobs = new FocusJobs(allowEmptyLabelmap);
 
 		List<FocusAbstractClassifier> classifiers = new ArrayList<FocusAbstractClassifier>();
 
 		classifiers.add(new FocusMLKNNClassifier(13, Distance.COSINUS));
+		classifiers.add(new FocusMLKNNClassifier(10, Distance.COSINUS));
+		classifiers.add(new FocusMLKNNClassifier(7, Distance.COSINUS));
 		
 
 		List<AbstractFeatureQuantifier> quantifiers = new ArrayList<AbstractFeatureQuantifier>();
@@ -88,13 +81,13 @@ public class DefaultExperimentGenerator {
 
 				for (int suffixTrees = 0; suffixTrees <= 0; suffixTrees++) { //kein Suffixtree
 
-					for (int norm = 0; norm <= 1; norm++) { // nur normiert
+					for (int norm = 1; norm <= 1; norm++) { // nur normiert
 
-						for (int stem = 0; stem <= 1; stem++) { // nur gestemmt
+						for (int stem = 1; stem <= 1; stem++) { // nur gestemmt
 
-							for (int stopwords = 0; stopwords <= 1; stopwords++) { 
+							for (int stopwords = 1; stopwords <= 1; stopwords++) { 
 
-								for (int n = 0; n <= 2; n++) { // changed 4 to 3
+								for (int n = 1; n <= 1; n++) { // nur 3-gramme
 
 									int[] nGrams = null;
 									switch (n) {
@@ -157,7 +150,7 @@ public class DefaultExperimentGenerator {
 					}
 				}
 				// write Results...
-//				jobs.persistExperimentResults(results, resultsOutputFile);
+				jobs.persistExperimentResults(results, resultsOutputFile);
 				jobs.exportResults(results,resultsOutputFile);
 
 				if (classifier instanceof FocusNaiveBayesClassifier) {

@@ -2,6 +2,11 @@ package de.uni_koeln.spinfo.ml_classification.data;
 
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.CategoryResult;
 
+/**
+ * stores the result of the evaluation of one label
+ * @author Johanna
+ *
+ */
 public class MLCategoryResult extends CategoryResult{
 
 	private static final long serialVersionUID = 1L;

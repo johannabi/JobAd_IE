@@ -19,99 +19,99 @@ import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 public class Evaluator {
 	
 	
-	public static void evaluate(List<ClassifyUnit> classified){
-		
-		int truePosKey = 0;
-		int trueNegKey = 0;
-		int falsePosKey = 0;
-		int falseNegKey = 0;
-		
-		int truePosClassifier = 0;
-		int trueNegClassifier = 0;
-		int falsePosClassifier = 0;
-		int falseNegClassifier = 0;
-		
-		int truePosCombined = 0;
-		int trueNegCombined = 0;
-		int falsePosCombined = 0;
-		int falseNegCombined = 0;
-		
-		for (ClassifyUnit classifyUnit : classified) {
-			FocusClassifyUnit fcu = (FocusClassifyUnit) classifyUnit;
-			
-			Map<String, Boolean> goldStandard = fcu.getInFocus();
-			Map<String, Boolean> keyFocus = fcu.getKeyWordFocus();
-			Map<String, Boolean> classifierFocus = fcu.getClassifiedFocus();
-			Map<String, Boolean> combinedFocus = fcu.getCombinedFocus();
-			
-			//iterates over gold standard
-			for(Map.Entry<String, Boolean> gs : goldStandard.entrySet()){
-				Boolean gsBoolean = gs.getValue();
-				Boolean kBoolean = keyFocus.get(gs.getKey());
-				Boolean cBoolean = classifierFocus.get(gs.getKey());
-				Boolean combiBoolean = combinedFocus.get(gs.getKey());
-				
-				
-				// if Focus is tagged in gold standard
-				if(gsBoolean){
-					if(kBoolean)
-						truePosKey++;  // gs && key
-					else
-						falseNegKey++; // gs && !key
-					if(cBoolean)
-						truePosClassifier++; // gs && classifier
-					else
-						falseNegClassifier++; // gs && !classifier
-					if(combiBoolean)
-						truePosCombined++; // gs && combined
-					else
-						falseNegCombined++; // gs && !combined
-				} 
-				// if Focus isn't tagged in gold standard
-				else{
-					if(kBoolean) 
-						falsePosKey++;  //!gs && key
-					else
-						trueNegKey++; // !gs && !key
-					if(cBoolean)
-						falsePosClassifier++; // !gs && classifier
-					else
-						trueNegClassifier++; // !gs && !classifier
-					if(combiBoolean)
-						falsePosCombined++; // !gs && combined
-					else
-						trueNegCombined++; // !gs && !combined
-					
-				}
-			}
-		}
-		
-		System.out.println("EVALUATION.... ");
-		
-		System.out.println("Keyword Classifier");
-		System.out.println("True Positives: " + truePosKey);
-		System.out.println("True Negatives: " + trueNegKey);
-		System.out.println("False Positives: " + falsePosKey);
-		System.out.println("False Negatives: " + falseNegKey);
-		System.out.println("Precision: " + (double)(truePosKey/(double)(truePosKey + falsePosKey)));
-		System.out.println("Recall: " + (double)(truePosKey/(double)(truePosKey + falseNegKey)));
-		System.out.println("----------------");
-		System.out.println("Classifier");
-		System.out.println("True Positives: " + truePosClassifier);
-		System.out.println("True Negatives: " + trueNegClassifier);
-		System.out.println("False Positives: " + falsePosClassifier);
-		System.out.println("False Negatives: " + falseNegClassifier);
-		System.out.println("Precision: " + (double)(truePosClassifier/(double)(truePosClassifier + falsePosClassifier)));
-		System.out.println("Recall: " + (double)(truePosClassifier/(double)(truePosClassifier + falseNegClassifier)));
-		System.out.println("----------------");
-		System.out.println("Combined");
-		System.out.println("True Positives: " + truePosCombined);
-		System.out.println("True Negatives: " + trueNegCombined);
-		System.out.println("False Positives: " + falsePosCombined);
-		System.out.println("False Negatives: " + falseNegCombined);
-		System.out.println("Precision: " + (double)(truePosCombined/(double)(truePosCombined + falsePosCombined)));
-		System.out.println("Recall: " + (double)(truePosCombined/(double)(truePosCombined + falseNegCombined)));
-	}
+//	public static void evaluate(List<ClassifyUnit> classified){
+//		
+//		int truePosKey = 0;
+//		int trueNegKey = 0;
+//		int falsePosKey = 0;
+//		int falseNegKey = 0;
+//		
+//		int truePosClassifier = 0;
+//		int trueNegClassifier = 0;
+//		int falsePosClassifier = 0;
+//		int falseNegClassifier = 0;
+//		
+//		int truePosCombined = 0;
+//		int trueNegCombined = 0;
+//		int falsePosCombined = 0;
+//		int falseNegCombined = 0;
+//		
+//		for (ClassifyUnit classifyUnit : classified) {
+//			FocusClassifyUnit fcu = (FocusClassifyUnit) classifyUnit;
+//			
+//			Map<String, Boolean> goldStandard = fcu.getInFocus();
+//			Map<String, Boolean> keyFocus = fcu.getKeyWordFocus();
+//			Map<String, Boolean> classifierFocus = fcu.getClassifiedFocus();
+//			Map<String, Boolean> combinedFocus = fcu.getCombinedFocus();
+//			
+//			//iterates over gold standard
+//			for(Map.Entry<String, Boolean> gs : goldStandard.entrySet()){
+//				Boolean gsBoolean = gs.getValue();
+//				Boolean kBoolean = keyFocus.get(gs.getKey());
+//				Boolean cBoolean = classifierFocus.get(gs.getKey());
+//				Boolean combiBoolean = combinedFocus.get(gs.getKey());
+//				
+//				
+//				// if Focus is tagged in gold standard
+//				if(gsBoolean){
+//					if(kBoolean)
+//						truePosKey++;  // gs && key
+//					else
+//						falseNegKey++; // gs && !key
+//					if(cBoolean)
+//						truePosClassifier++; // gs && classifier
+//					else
+//						falseNegClassifier++; // gs && !classifier
+//					if(combiBoolean)
+//						truePosCombined++; // gs && combined
+//					else
+//						falseNegCombined++; // gs && !combined
+//				} 
+//				// if Focus isn't tagged in gold standard
+//				else{
+//					if(kBoolean) 
+//						falsePosKey++;  //!gs && key
+//					else
+//						trueNegKey++; // !gs && !key
+//					if(cBoolean)
+//						falsePosClassifier++; // !gs && classifier
+//					else
+//						trueNegClassifier++; // !gs && !classifier
+//					if(combiBoolean)
+//						falsePosCombined++; // !gs && combined
+//					else
+//						trueNegCombined++; // !gs && !combined
+//					
+//				}
+//			}
+//		}
+//		
+//		System.out.println("EVALUATION.... ");
+//		
+//		System.out.println("Keyword Classifier");
+//		System.out.println("True Positives: " + truePosKey);
+//		System.out.println("True Negatives: " + trueNegKey);
+//		System.out.println("False Positives: " + falsePosKey);
+//		System.out.println("False Negatives: " + falseNegKey);
+//		System.out.println("Precision: " + (double)(truePosKey/(double)(truePosKey + falsePosKey)));
+//		System.out.println("Recall: " + (double)(truePosKey/(double)(truePosKey + falseNegKey)));
+//		System.out.println("----------------");
+//		System.out.println("Classifier");
+//		System.out.println("True Positives: " + truePosClassifier);
+//		System.out.println("True Negatives: " + trueNegClassifier);
+//		System.out.println("False Positives: " + falsePosClassifier);
+//		System.out.println("False Negatives: " + falseNegClassifier);
+//		System.out.println("Precision: " + (double)(truePosClassifier/(double)(truePosClassifier + falsePosClassifier)));
+//		System.out.println("Recall: " + (double)(truePosClassifier/(double)(truePosClassifier + falseNegClassifier)));
+//		System.out.println("----------------");
+//		System.out.println("Combined");
+//		System.out.println("True Positives: " + truePosCombined);
+//		System.out.println("True Negatives: " + trueNegCombined);
+//		System.out.println("False Positives: " + falsePosCombined);
+//		System.out.println("False Negatives: " + falseNegCombined);
+//		System.out.println("Precision: " + (double)(truePosCombined/(double)(truePosCombined + falsePosCombined)));
+//		System.out.println("Recall: " + (double)(truePosCombined/(double)(truePosCombined + falseNegCombined)));
+//	}
 
 	public static Map<Map<String, Boolean>, Integer> analyzeCombinations(List<ClassifyUnit> annotatedData, int i) throws IOException {
 

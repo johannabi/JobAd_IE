@@ -9,11 +9,16 @@ import java.util.UUID;
 
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 
+/**
+ * represents a job ad
+ * @author Johanna
+ *
+ */
 public class FocusClassifyUnit extends ClassifyUnit implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	private Map<String, Boolean> inFocus, combinedFocus, keyWordFocus, classifiedFocus = new HashMap<String, Boolean>();
+	private Map<String, Boolean> inFocus = new HashMap<String, Boolean>();
 	
 	private String title;
 	
@@ -74,30 +79,6 @@ public class FocusClassifyUnit extends ClassifyUnit implements Serializable{
 		this.title = title;
 	}
 
-	public Map<String, Boolean> getKeyWordFocus() {
-		return keyWordFocus;
-	}
-
-	public void setKeyWordFocus(Map<String, Boolean> keyWordFocus) {
-		this.keyWordFocus = keyWordFocus;
-	}
-
-	public Map<String, Boolean> getClassifiedFocus() {
-		return classifiedFocus;
-	}
-
-	public void setClassifiedFocus(Map<String, Boolean> classifiedFocus) {
-		this.classifiedFocus = classifiedFocus;
-	}
-
-	public Map<String, Boolean> getCombinedFocus() {
-		return combinedFocus;
-	}
-
-	public void setCombinedFocus(Map<String, Boolean> combinedFocus) {
-		this.combinedFocus = combinedFocus;
-	}
-
 	/**
 	 * List of k nearest Neighbors
 	 * @return
@@ -110,6 +91,11 @@ public class FocusClassifyUnit extends ClassifyUnit implements Serializable{
 		this.neighbors = neighbors;
 	}
 
+	/**
+	 * returns the number a focus occurs in the
+	 * nearest neighbors
+	 * @return
+	 */
 	public Map<String, Integer> getNeighborFocusCount() {
 		return neighborFocusCount;
 	}

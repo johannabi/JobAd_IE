@@ -105,8 +105,8 @@ public class FocusSingleExperimentExecutor {
 		after = System.nanoTime();
 //		System.out.println("evaluate: " + (after - before) / 1000000000d);
 		before = System.nanoTime();
-		Map<ClassifyUnit, Map<String, Boolean>> misClassified = result.getMisclassified();
-		Util.exportmisclassifiedtoXLSX("misclassified.xlsx", misClassified);
+//		Map<ClassifyUnit, Map<String, Boolean>> misClassified = result.getMisclassified();
+//		Util.exportmisclassifiedtoXLSX("misclassified.xlsx", misClassified);
 //		System.out.println("export mis-classified: " + (after - before) / 1000000000d);
 		after = System.nanoTime();
 		return result;

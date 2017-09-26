@@ -26,7 +26,8 @@ import de.uni_koeln.spinfo.ml_classification.workflow.FocusJobs;
 import de.uni_koeln.spinfo.ml_classification.workflow.FocusSingleExperimentExecutor;
 
 /**
- * evaluates the multilabel classification with the given configurations
+ * evaluates the multilabel classification with the given configurations.
+ * serializes result and exports evaluation to .xlsx-File
  * @author Johanna
  *
  */

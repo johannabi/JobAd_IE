@@ -37,6 +37,12 @@ import de.uni_koeln.spinfo.classification.core.featureEngineering.featureSelecti
 
 public class Util {
 
+	/**
+	 * exports feature vectors of the given ClassifyUnits to .csv-File
+	 * @param features features of the ClassifyUnits
+	 * @param classifyUnits Job Ads to exportz
+	 * @throws FileNotFoundException
+	 */
 	public static void exportVectors(List<String> features, List<ClassifyUnit> classifyUnits)
 			throws FileNotFoundException {
 
@@ -62,6 +68,13 @@ public class Util {
 
 	}
 
+	/**
+	 * writes the given String into a .txt-File with the given name at
+	 * ml_classification/output/statistics
+	 * @param toWrite
+	 * @param path
+	 * @throws IOException
+	 */
 	public static void writeTXTFile(String toWrite, String path) throws IOException {
 
 		String folder = "ml_classification/output/statistics/";
@@ -80,6 +93,13 @@ public class Util {
 		System.out.println("created file: " + export.getAbsolutePath());
 	}
 
+	/**
+	 * exports the given job ads to .xlsx-File
+	 * structure is the same as in the input file
+	 * @param path
+	 * @param data
+	 * @throws IOException
+	 */
 	public static void exportUnitstoXLSX(String path, Set<FocusClassifyUnit> data) throws IOException {
 
 		String[] headRow = new String[5];
@@ -153,6 +173,12 @@ public class Util {
 		return toReturn.toString();
 	}
 
+	/**
+	 * exports model to the given file
+	 * @param file
+	 * @param model
+	 * @throws IOException
+	 */
 	public static void exportModel(File file, Model model) throws IOException {
 		FileOutputStream fos = new FileOutputStream(file);
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -161,6 +187,12 @@ public class Util {
 		oos.close();
 	}
 
+	/**
+	 * exports title, content, classified and gold standard focuses
+	 * @param path
+	 * @param misClassified
+	 * @throws IOException
+	 */
 	public static void exportmisclassifiedtoXLSX(String path, Map<ClassifyUnit, Map<String, Boolean>> misClassified)
 			throws IOException {
 		String[] headRow = new String[5];
@@ -231,6 +263,11 @@ public class Util {
 		return list;
 	}
 
+	/**
+	 * computes statistics of the distance to each nearest neighbor.
+	 * Mean, SD, min & max are printed in console
+	 * @param nearestDist List of the distance to the nearest neighbor
+	 */
 	public static void computeStatistics(List<Double> nearestDist) {
 		double mean = 0d;
 		double sd = 0d;
@@ -264,6 +301,14 @@ public class Util {
 		System.out.println("*************");
 	}
 
+	/**
+	 * converts the distribution of focus, studySubject or Degrees
+	 * into String
+	 * @param distr 
+	 * @param topic name of the topic
+	 * @param size size of data
+	 * @return
+	 */
 	public static String writeDistribution(Map<Integer, Integer> distr, String topic, int size) {
 		StringBuilder toReturn = new StringBuilder();
 		int sum = 0;
@@ -277,6 +322,13 @@ public class Util {
 		return toReturn.toString();
 	}
 
+	/**
+	 * creates feature units for keywords to use it for pre-classification
+	 * @param keywords
+	 * @param fuc
+	 * @return
+	 * @throws IOException
+	 */
 	public static Map<String, List<String>> prepareKeywords(Map<String, List<String>> keywords,
 			FeatureUnitConfiguration fuc) throws IOException {
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
@@ -315,6 +367,13 @@ public class Util {
 		return toReturn;
 	}
 
+	/**
+	 * computes for each focus the number of times he occurs
+	 * with another specific focus
+	 * @param focusCombis all whole combinations of focuses
+	 * @param focusList all possible focuses
+	 * @return
+	 */
 	public static Map<String, Map<String, Integer>> getBinaryCombinations(Map<Set<String>, Integer> focusCombis, List<String> focusList) {
 		Map<String, Map<String, Integer>> toReturn = new HashMap<String, Map<String, Integer>>();
 
@@ -340,37 +399,15 @@ public class Util {
 			}
 			toReturn.put(focus, combiCount);
 		}
-		
-		
-		
-//		for (Map.Entry<Set<String>, Integer> e : focusCombis.entrySet()) {
-//			Set<String> currCombi = e.getKey();
-//
-//			for (String label : currCombi) {
-//				Map<String, Integer> partners = new HashMap<String, Integer>();
-//				// für label liegen schon kombinationen vor
-//				if (toReturn.containsKey(label))
-//					partners = toReturn.get(label);
-//				if (currCombi.size() == 1) {
-//					partners.put(label, e.getValue());
-//					toReturn.put(label, partners);
-//					continue;
-//				}
-//				for (String label2 : currCombi){
-//					if(label2.equals(label))
-//						continue;
-//					Integer freq = 0;
-//					if(partners.containsKey(label2))
-//						freq = partners.get(label2);
-//					partners.put(label2, (freq + e.getValue()));
-//					
-//				}
-//			}
-//		}
 
 		return toReturn;
 	}
-
+	/**
+	 * takes the configuration String and converts it into a more readable
+	 * version. includes tabs between every component
+	 * @param experimentConfiguration
+	 * @return
+	 */
 	public static String makePrettyExperimentConf(String experimentConfiguration) {
 		String classifier = null;
 		String distance = null;
@@ -438,6 +475,14 @@ public class Util {
 		return buff.toString();
 	}
 
+	/**
+	 * reads the configuration file and gives them back as
+	 * String[]
+	 * @param configPath path of configuration file (.txt)
+	 * @param variables number of variables (lines) to read
+	 * @return
+	 * @throws IOException
+	 */
 	public static String[] getConfigurations(String configPath, int variables) throws IOException {
 	
 		String[] toReturn = new String[variables];
@@ -460,6 +505,12 @@ public class Util {
 		return toReturn;
 	}
 
+	/**
+	 * creates a XSSF Row for the evaluation file
+	 * @param mer result that should be written
+	 * @param row row where it should be written
+	 * @return
+	 */
 	public static Row createRow(MLExperimentResult mer, Row row) {
 		Cell cell;
 		DecimalFormat f = new DecimalFormat("#0.0000");
@@ -497,24 +548,6 @@ public class Util {
 			cell = row.createCell(i + 13);
 			cell.setCellValue(configs[i]);
 		}
-//		cell = row.createCell(13);
-//		cell.setCellValue("");
-//		cell = row.createCell(14);
-//		cell.setCellValue("");
-//		cell = row.createCell(15);
-//		cell.setCellValue("");
-//		cell = row.createCell(16);
-//		cell.setCellValue("");
-//		cell = row.createCell(17);
-//		cell.setCellValue("");
-//		cell = row.createCell(18);
-//		cell.setCellValue("");
-//		cell = row.createCell(19);
-//		cell.setCellValue("");
-//		cell = row.createCell(20);
-//		cell.setCellValue("");
-//		cell = row.createCell(21);
-//		cell.setCellValue("");
 		return row;
 	}
 	

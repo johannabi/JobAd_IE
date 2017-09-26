@@ -18,6 +18,11 @@ import de.uni_koeln.spinfo.classification.core.distance.Distance;
 import de.uni_koeln.spinfo.classification.core.distance.DistanceCalculator;
 import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.AbstractFeatureQuantifier;
 
+/**
+ * represents a multilabel classifier
+ * @author Johanna
+ *
+ */
 public class FocusMLKNNClassifier extends FocusAbstractClassifier {
 
 	/**
@@ -30,11 +35,23 @@ public class FocusMLKNNClassifier extends FocusAbstractClassifier {
 	private double threshold = 0.5;
 	private List<Double> nearestDistances = new ArrayList<Double>();
 
+	/**
+	 * 
+	 * @param k number of nearest neighbors
+	 * @param distance distance measure
+	 */
 	public FocusMLKNNClassifier(int k, Distance distance) {
 		this.k = k;
 		this.distance = distance;
 	}
 
+	/**
+	 * 
+	 * @param k number of nearest neighbors
+	 * @param distance distance measure
+	 * @param threshold double between 0.0 and 1.0 to define
+	 * from which probability a label should be attributed
+	 */
 	public FocusMLKNNClassifier(int k, Distance distance, double threshold) {
 		this.k = k;
 		this.distance = distance;
@@ -45,14 +62,26 @@ public class FocusMLKNNClassifier extends FocusAbstractClassifier {
 
 	}
 
+	/**
+	 * returns list of the distance to the nearest neighbor
+	 * @return
+	 */
 	public List<Double> getNearestDistances() {
 		return nearestDistances;
 	}
 
+	/**
+	 * returns number of nearest neighbors
+	 * @return
+	 */
 	public int getK() {
 		return k;
 	}
 
+	/**
+	 * sets number of nearest neighbors
+	 * @param k
+	 */
 	public void setK(int k) {
 		this.k = k;
 	}

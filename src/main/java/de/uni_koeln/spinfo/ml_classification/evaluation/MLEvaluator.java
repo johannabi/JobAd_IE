@@ -91,9 +91,10 @@ public class MLEvaluator {
 	}
 
 	/**
+	 * creates evaluation measures for the classified data and
+	 * writes the values on the object's attributes (use getters)
 	 * @param classified
-	 *            - Map of annotated classIDs (key) and classified classIDs of
-	 *            each cross-valid.-group (value)
+	 * @param focusList
 	 */
 	public void evaluate(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> focusList) {
 		numberOfClasses = ((FocusClassifyUnit) classified.keySet().iterator().next()).getInFocus().size();
@@ -104,7 +105,14 @@ public class MLEvaluator {
 		}
 		evaluate(classified, classesList, focusList);
 	}
-
+	
+	/**
+	 * creates evaluation measures for the classified data and
+	 * writes the values on the object's attributes (use getters)
+	 * @param classified
+	 * @param categories categories that should be integrated in evaluation
+	 * @param focusList
+	 */
 	public void evaluate(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> categories,
 			List<String> focusList) {
 		if (categories == null) {
@@ -248,14 +256,6 @@ public class MLEvaluator {
 		return hammingLoss;
 	}
 
-//	/**
-//	 * returns absolute number of totally correct classified units
-//	 * 
-//	 * @return
-//	 */
-//	public int getTotalCorrect() {
-//		return totalCorrect;
-//	}
 
 	/**
 	 * returns maximal number of wrong classified labels per classify unit

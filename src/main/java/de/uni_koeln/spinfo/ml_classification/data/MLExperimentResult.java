@@ -8,6 +8,11 @@ import de.uni_koeln.spinfo.ml_classification.evaluation.EvaluationValue;
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ExperimentResult;
 
+/**
+ * contains the evaluation of a multilabel classification
+ * @author Johanna
+ *
+ */
 public class MLExperimentResult extends ExperimentResult {
 
 	private static final long serialVersionUID = 1L;
@@ -40,14 +45,6 @@ public class MLExperimentResult extends ExperimentResult {
 	public void setCoverage(double coverage) {
 		this.coverage = coverage;
 	}
-
-	// public void setTotalCorrect(int totalCorrect) {
-	// this.totalCorrect = totalCorrect;
-	// }
-	//
-	// public int getTotalCorrect(){
-	// return totalCorrect;
-	// }
 
 	public void setNumberOfEvalData(int numberOfEvalData) {
 		this.numberOfEvalData = numberOfEvalData;
@@ -101,7 +98,11 @@ public class MLExperimentResult extends ExperimentResult {
 	public List<MLCategoryResult> getMLCategoryEvaluations() {
 		return categoryEvaluations;
 	}
-
+	
+	/**
+	 * returns Micro-Precision, -Recall and F-Measure
+	 * @return
+	 */
 	public Map<String, Double> getMicroAveraging() {
 		Map<String, Double> toReturn = new HashMap<String, Double>();
 		double microTP = 0d;
@@ -129,6 +130,10 @@ public class MLExperimentResult extends ExperimentResult {
 		return toReturn;
 	}
 
+	/**
+	 * returns Macro-Precision, -Recall and F-Measure
+	 * @return
+	 */
 	public Map<String, Double> getMacroAveraging() {
 		Map<String, Double> toReturn = new HashMap<String, Double>();
 
