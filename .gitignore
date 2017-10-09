@@ -13,6 +13,7 @@
 /information_extraction/data/openNLPmodels/de-sent.bin
 /information_extraction/data/openNLPmodels/de-token.bin
 /information_extraction/data/sentencedata_models/ger-tagger+lemmatizer+morphology+graph-based-3.6
+information_extraction/data/sentencedata_models/ger-tagger+lemmatizer+morphology+graph-based-3.6+.tgz
 /information_extraction/data/tools/noTools.txt
 /information_extraction/data/tools/tools.txt
 /information_extraction/data/tools/toolContexts.txt
