@@ -1,45 +1,22 @@
-# JobAd_IE
-Classification (Zone Analysis) and Information Extraction From Job Ads
+# Job Ad Classification
+Multi-Label Classification for Job Ads
 
-Code for Classification and Information Extraction from job advertisements as part of my Master's Thesis.
-
-### 1.Classification/Zone-Analysis
-Splits JobAds into paragraphs and classifies them into the four classes
-  1. company description
-  2. job description
-  3. applicants profile
-  4. formalities
+Code for Multi-Label Classification Job Ads into focuses as part of my Bachelor's Thesis
   
-  ### 2. Information Extraction
-  Extract competences from applicants profiles
-  
-  ____________________________________________________________________________________
+____________________________________________________________________________________
 
-Die Klassen und weiteren Dateien des Projekts sind in der folgenden Paketstruktur geordnet, welche die jeweilige Funktionalität wiederspiegeln soll:
+Das vorliegende Framework dient dazu, Stellenausschreibungen mithilfe von Trainingsdaten in Schwerpunkte zu klassifizieren oder die Klassifikation zu evaluieren. Desweiteren ist es möglich, die Trainingsdaten im Hinblick auf die Verteilung ihrer Schwerpunkte zu analysieren. 
+Alle ausführbaren Klassen befinden sich im package src/main/java/de/uni_koeln/spinfo/ml_classification/applications
 
-![packages](https://cloud.githubusercontent.com/assets/4161405/24959361/dc254c58-1f92-11e7-8860-2b499882896f.PNG)
- 
-Sämtliche ausführbaren Klassen liegen als JUnit-Testklassen vor und stellen vollständige Workflows dar.
+Um die Klasse SingleExperimentExecution auszuführen, werden folgende Dateien benötigt:
+- Trainingsdaten (.xlsx)
+- Liste mit möglichen Schwerpunkten (.xlsx)
+- Konfigurationsdatei (ml_classification/configurations.txt)
 
-Mit classifyJobAdsIntoParagraphs kann eine Stellenanzeigen-Datenbank in Paragraphen der oben genannten Klassen klassifiziert werden. Die Ergebnisse werden als Datenbankfiles gespeichert (unter test/resources/classification/output).
+In der Datei ml_classification/configurations_manual.pdf wird beschrieben, welche Werte als Konfigurationen zulässig sind. In der Konfigurationsdatei lassen sich zudem die Pfade zu den anderen drei Dateien angeben.
 
-SimpleRulebasedExraction verwendet diese als Input zur Kompetenzextraktion und speichert die Ergebnisse ebenfalls als Datenbankfile (test/resources/information_extraction/output).
+_____________________________________________________________________________________
 
-Mit CreateCompetenceTrainingData, einem interaktiven Workflow zur Annotation von Kompetenzen, kann ein Testkorpus für Evaluationszwecke erstellt werden. (Ein manuell annotiertes Korpus befindet sich bereits im Ordern test/resources/information_extraction/trainingdata)
+Die Klasse JobAdClassificationApp benötigt zu den genannten Dateien noch eine .xlsx-Datei mit den zu klassifizierenden Daten.
 
-EvaluateSimpleRulebasedExtraction und EvaluateBootstrapExtraction, führen eine Extraktion mit dem jeweiligen Verfahren durch und evaluieren die Ergebnisse im Anschluss. Ausführliche Evaluationsergebnisse (inklusive aller richtig und falsch extrahieren Entitäten) werden als Text-files gespeichert (test/resources/informationextraction/output/evaluation_files). 
-Bei der Evaluation des Bootstrapping-Ansatzes werden außerdem sämtliche automatisch generierten Patterns hinterlegt (test/resources/information_extraction/output).
 
-______________________________________________________________________________________
-
-Zur Ausführung der JUnit Testklassen müssen folgende Dateien hinzugefügt werden:
-
-In den Ordner information_extraction/data/openNLPmodels: 
-de-sent.bin & de-token.bin (downloadlink: http://opennlp.sourceforge.net/models-1.5/)
-
-In den Ordner information_extraction/data/sentencedata_models: 
-ger-tagger+lemmatizer+morphology+graph-based-3.6+.tgz (downloadlink: https://code.google.com/archive/p/mate-tools/downloads)
-
-_______________________________________________________________________________________
-
-1 Bundesinstitut für Berufsbildung
