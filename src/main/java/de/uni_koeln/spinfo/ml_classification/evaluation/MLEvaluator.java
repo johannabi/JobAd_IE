@@ -13,6 +13,11 @@ import de.uni_koeln.spinfo.ml_classification.data.MLCategoryResult;
 import de.uni_koeln.spinfo.ml_classification.workflow.Util;
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 
+/**
+ * class to store evaluation values for multi-label classification
+ * @author Johanna
+ *
+ */
 public class MLEvaluator {
 
 	/** number of labels */
