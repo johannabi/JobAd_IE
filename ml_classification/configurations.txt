@@ -11,7 +11,7 @@ nGrams:3
 distance:cosinus
 threshold:0.5
 knnValue:13
-allowemptylabelmap:
+allowemptylabelmap:no
 output:ranking
 classifier:mlknn
 quantifier:loglikelihood
