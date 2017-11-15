@@ -43,9 +43,9 @@ public class JobAdClassificationApp {
 								// File("ml_classification/data/trainingSets/getIn_JobAdDB_great.xlsx");
 	static File focusesFile;// = new
 							// File("ml_classification/data/getIn_focuses.xlsx");
-	static File studiesFile = new File("ml_classification/data/studysubjects.xlsx");
+	static File studiesFile; //= new File("ml_classification/data/studysubjects.xlsx");
 	
-	static File degreesFile = new File("ml_classification/data/degrees.xlsx");// TODO in config-Datei übertragen
+	static File degreesFile; // = new File("ml_classification/data/degrees.xlsx");// TODO in config-Datei übertragen
 	static boolean safeUnusedUnits = false;
 	/** use serialized data (training & classified) to evaluate */
 	static boolean useSavedData = false;
@@ -143,48 +143,50 @@ public class JobAdClassificationApp {
 	 */
 	private static void initialize() throws IOException {
 
-		String[] config = Util.getConfigurations(configPath, 15);
+		String[] config = Util.getConfigurations(configPath, 17);
 		inputFile = new File(config[0]);
 		outputFolder = config[1];
 		trainingFile = new File(config[2]);
 		focusesFile = new File(config[3]);
+		studiesFile = new File(config[4]);
+		degreesFile = new File(config[5]);
 
-		ignoreStopwords = config[4].equalsIgnoreCase("true");
-		normalizeInput = config[5].equalsIgnoreCase("true");
-		useStemmer = config[6].equalsIgnoreCase("true");
+		ignoreStopwords = config[6].equalsIgnoreCase("true");
+		normalizeInput = config[7].equalsIgnoreCase("true");
+		useStemmer = config[8].equalsIgnoreCase("true");
 		if (config[7] != null)
-			nGrams = Arrays.stream(config[7].split(",")).mapToInt(Integer::parseInt).toArray();
+			nGrams = Arrays.stream(config[9].split(",")).mapToInt(Integer::parseInt).toArray();
 
-		if (config[8] != null) {
-			if (config[8].equalsIgnoreCase("cosinus"))
+		if (config[10] != null) {
+			if (config[10].equalsIgnoreCase("cosinus"))
 				distance = Distance.COSINUS;
-			else if (config[8].equalsIgnoreCase("euklid"))
+			else if (config[10].equalsIgnoreCase("euklid"))
 				distance = Distance.EUKLID;
-			else if (config[8].equalsIgnoreCase("manhattan"))
+			else if (config[10].equalsIgnoreCase("manhattan"))
 				distance = Distance.MANHATTAN;
 		}
-		if (config[9] != null)
-			threshold = Double.parseDouble(config[9]);
-
-		if (config[10] != null)
-			knnValue = Integer.parseInt(config[10]);
-
 		if (config[11] != null)
-			allowEmptyLabelMap = config[11].equalsIgnoreCase("true");
+			threshold = Double.parseDouble(config[11]);
 
-		if (config[12].equalsIgnoreCase("ranking"))
+		if (config[12] != null)
+			knnValue = Integer.parseInt(config[12]);
+
+		if (config[13] != null)
+			allowEmptyLabelMap = config[13].equalsIgnoreCase("true");
+
+		if (config[14].equalsIgnoreCase("ranking"))
 			outputRanking = true;
-		else if (config[12].equalsIgnoreCase("labels"))
+		else if (config[14].equalsIgnoreCase("labels"))
 			outputRanking = false;
 
-		if (config[13].equalsIgnoreCase("NaiveBayes"))
+		if (config[15].equalsIgnoreCase("NaiveBayes"))
 			classifier = new FocusNaiveBayesClassifier(threshold);
-		else if (config[13].equalsIgnoreCase("MLKNN"))
+		else if (config[15].equalsIgnoreCase("MLKNN"))
 			classifier = new FocusMLKNNClassifier(knnValue, distance, threshold);
 
-		if (config[14].equalsIgnoreCase("tfidf"))
+		if (config[16].equalsIgnoreCase("tfidf"))
 			quantifier = new TFIDFFeatureQuantifier();
-		else if (config[14].equalsIgnoreCase("loglikelihood"))
+		else if (config[16].equalsIgnoreCase("loglikelihood"))
 			quantifier = new LogLikeliHoodFeatureQuantifier();
 
 	}

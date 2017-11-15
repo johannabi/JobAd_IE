@@ -1,7 +1,9 @@
 inputFile:ml_classification/input/toAnnotate.xlsx
 outputFolder:ml_classification/output
-trainingFile:ml_classification/data/trainingSets/training_greatminus.xlsx
+trainingFile:ml_classification/data/trainingSets/JobAdDB.xlsx
 focusesFile:ml_classification/data/focuses.xlsx
+studiesFile:ml_classification/data/studysubjects.xlsx
+degreesFile:ml_classification/data/degrees.xlsx
 ignoreStopwords:true
 normalizeInput:true
 useStemmer:true

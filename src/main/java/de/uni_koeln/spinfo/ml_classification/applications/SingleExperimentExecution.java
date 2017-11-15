@@ -34,7 +34,7 @@ public class SingleExperimentExecution {
 	/////////////////////////////
 	// APP-CONFIGURATION
 	/////////////////////////////
-	static File inputFile = new File("ml_classification/data/trainingSets/getIn_JobAdDB.xlsx");
+	static File inputFile = new File("ml_classification/data/trainingSets/JobAdDB.xlsx");
 //	static File inputFile = new File("ml_classification/data/trainingSets/content_export_new.xlsx");
 	static String outputFolder = "ml_classification/output";
 	static File focusesFile = new File("ml_classification/data/focuses.xlsx");
