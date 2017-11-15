@@ -22,16 +22,19 @@ import de.uni_koeln.spinfo.ml_classification.workflow.Util;
 
 public class TrainingUnitCreator {
 
-	private File trainingFile, focusesFile;
+	private File trainingFile, focusesFile, studiesFile, degreesFile;
 	private List<FocusClassifyUnit> classifiedData = new ArrayList<FocusClassifyUnit>();
-	private Map<String, List<String>> focusKeys;
+	private Map<String, List<String>> focusKeys, studiesKeys, degreesKeys;
 	// private int numberOfCategories = 0;
 
-	public TrainingUnitCreator(File trainingFile, File focusesFile) {
+	public TrainingUnitCreator(File trainingFile, File focusesFile, 
+			File studiesFile, File degreesFile) {
 		this.trainingFile = trainingFile;
 		// this.classifiedData
 		this.focusesFile = focusesFile;
 		// this.numberOfCategories = categories;
+		this.studiesFile = studiesFile;
+		this.degreesFile = degreesFile;
 	}
 
 	/**
@@ -45,6 +48,26 @@ public class TrainingUnitCreator {
 	}
 
 	/**
+	 * Map with study subjects-Strings and keywords. Value might be empty (not
+	 * null!) if there are no keywords
+	 * 
+	 * @return
+	 */
+	public Map<String, List<String>> getStudiesKeys() {
+		return studiesKeys;
+	}
+	
+	/**
+	 * Map with degree-Strings and keywords. Value might be empty (not null!) if
+	 * there are no keywords
+	 * 
+	 * @return
+	 */
+	public Map<String, List<String>> getDegreeKeys() {
+		return degreesKeys;
+	}
+
+	/**
 	 * creates a FocusClassifyUnit for every JobAd in .xslx-Document. Sets
 	 * content and Boolean whether or not the JobAd belongs to a focus
 	 * 
@@ -53,7 +76,9 @@ public class TrainingUnitCreator {
 	 */
 	public List<FocusClassifyUnit> getTrainingData(Boolean safeUnused) throws IOException {
 
-		setFocusKeys(focusesFile);
+		focusKeys = setKeys(focusesFile);
+		studiesKeys = setKeys(studiesFile);
+		degreesKeys = setKeys(degreesFile);
 
 		if (classifiedData.isEmpty()) {
 
@@ -74,26 +99,22 @@ public class TrainingUnitCreator {
 				String degreesString = r.getCell(4).getStringCellValue();
 				FocusClassifyUnit fcu = new FocusClassifyUnit(title, titleContent, contentHTML);
 
-				Set<String> posFocuses = splitIntoPieces(focusString);
-				Set<String> studySubjects = splitIntoPieces(studySubjectsString);
-				Set<String> degrees = splitIntoPieces(degreesString);
+				Set<String> inFocusSet = splitIntoPieces(focusString);
+				Set<String> studiesSet = splitIntoPieces(studySubjectsString);
+				Set<String> degreesSet = splitIntoPieces(degreesString);
 
-				Map<String, Boolean> inFocus = new HashMap<String, Boolean>();
-				if (!posFocuses.isEmpty()) {
-					// creates Map of focuses the unit belongs to (or not)
-					for (String focus : focusKeys.keySet()) {
-						if (posFocuses.contains(focus))
-							inFocus.put(focus, new Boolean(true));
-						else
-							inFocus.put(focus, new Boolean(false));
-					}
-					// noFocus.add(fcu);
-					// row++;
-					// continue;
-				}
-				fcu.setStudySubjects(studySubjects);
+//				System.out.println(studySubjects);
+//				System.out.println(studiesKeys.keySet());
+				//TODO hier sind studieskeys und studysubjects noch groß geschrieben
+				Map<String, Boolean> inFocus = setLabels(inFocusSet, focusKeys.keySet());
+				Map<String, Boolean> studies = setLabels(studiesSet, studiesKeys.keySet());
+				Map<String, Boolean> degrees = setLabels(degreesSet, degreesKeys.keySet());
+
+				fcu.setStudySubjects(studies);
 				fcu.setDegrees(degrees);
-				if (!inFocus.containsValue(true)) {
+
+				if (!inFocus.containsValue(true)) { // TODO was, wenn Focus,
+													// aber keine Studienfächer?
 					// export Data for test instances
 					noFocus.add(fcu);
 
@@ -105,16 +126,17 @@ public class TrainingUnitCreator {
 
 			}
 			wb.close();
-			if(safeUnused)
+			if (safeUnused)
 				Util.exportUnitstoXLSX("notUsedData.xlsx", noFocus);
 
 		}
+
 		return classifiedData;
 
 	}
 
-	private void setFocusKeys(File foFile) throws IOException {
-		focusKeys = new HashMap<String, List<String>>();
+	private Map<String, List<String>> setKeys(File foFile) throws IOException {
+		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
 
 		FileInputStream fis = new FileInputStream(foFile);
 		XSSFWorkbook wb = new XSSFWorkbook(fis);
@@ -134,21 +156,26 @@ public class TrainingUnitCreator {
 			focus = focus.replaceAll(" ", "");
 			focus = focus.replaceAll("&", "");
 
+
 			XSSFCell c = r.getCell(1);
 			List<String> keys = new ArrayList<String>();
 			if (c != null) {
 				String keywordsString = c.getStringCellValue();
 				String[] keywords = keywordsString.split(",");
 				for (int i = 0; i < keywords.length; i++) {
-					String k = keywords[i].trim().toLowerCase();
+					String k = keywords[i].trim().toLowerCase();//.toLowerCase();		
+					k = k.replace("++", "[\\-\\s\\),A-Za-zäöüÄÖÜß]*");
 					keys.add(k);
 				}
 			}
-			focusKeys.put(focus, keys);
+			toReturn.put(focus, keys);
 			row++;
 		}
 
 		wb.close();
+
+		
+		return toReturn;
 	}
 
 	private String deleteHTML(String jobAdContent) {
@@ -172,11 +199,28 @@ public class TrainingUnitCreator {
 			string = string.replaceAll(" ", "");
 			string = string.replaceAll("&", "");
 
+
 			if (!string.isEmpty())
 				toReturn.add(string);
 		}
 
 		return toReturn;
 	}
+
+	private Map<String, Boolean> setLabels(Set<String> posLabels, Set<String> allLabels) {
+		Map<String, Boolean> labels = new HashMap<String, Boolean>();
+		// if (!posLabels.isEmpty()) {
+		// creates Map of focuses the unit belongs to (or not)
+		for (String focus : allLabels) {
+			if (posLabels.contains(focus))
+				labels.put(focus, new Boolean(true));
+			else
+				labels.put(focus, new Boolean(false));
+		}
+		// }
+		return labels;
+	}
+
+
 
 }

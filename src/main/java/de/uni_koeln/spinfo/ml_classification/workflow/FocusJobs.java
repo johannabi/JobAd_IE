@@ -29,11 +29,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.Jsoup;
 
-import de.uni_koeln.spinfo.ml_classification.classifiers.FocusAbstractClassifier;
-import de.uni_koeln.spinfo.ml_classification.data.FocusClassifyUnit;
-import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
-import de.uni_koeln.spinfo.ml_classification.evaluation.MLEvaluator;
-import de.uni_koeln.spinfo.ml_classification.preprocessing.TrainingUnitCreator;
 import de.uni_koeln.spinfo.classification.core.classifier.model.Model;
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 import de.uni_koeln.spinfo.classification.core.data.ExperimentConfiguration;
@@ -52,6 +47,14 @@ import de.uni_koeln.spinfo.classification.core.helpers.crossvalidation.Crossvali
 import de.uni_koeln.spinfo.classification.core.helpers.crossvalidation.TrainingTestSets;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.classifier.svm.SVMClassifier;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ExperimentResult;
+import de.uni_koeln.spinfo.ml_classification.classifiers.FocusAbstractClassifier;
+import de.uni_koeln.spinfo.ml_classification.data.FocusClassifyUnit;
+import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
+import de.uni_koeln.spinfo.ml_classification.evaluation.MLEvaluator;
+import de.uni_koeln.spinfo.ml_classification.extractors.AbstractExtractor;
+import de.uni_koeln.spinfo.ml_classification.extractors.DegreeExtractor;
+import de.uni_koeln.spinfo.ml_classification.extractors.StudyExtractor;
+import de.uni_koeln.spinfo.ml_classification.preprocessing.TrainingUnitCreator;
 
 public class FocusJobs {
 
@@ -60,10 +63,10 @@ public class FocusJobs {
 	protected Normalizer normalizer;
 	protected Stemmer stemmer;
 	protected FeatureUnitTokenizer tokenizer;
-	protected Map<String, List<String>> focusKeywords;
+	protected Map<String, List<String>> focusKeywords, studyKeywords, degreeKeywords;
 	/* Set of all Tokens in the Corpus */
 	protected Set<String> allTokens = new HashSet<String>();
-	private List<String> focusList;
+	private List<String> focusList, studyList, degreesList;
 	MutualInformationFilter mi_filter = new MutualInformationFilter();
 	private boolean allowEmptyLabelMap = true;
 
@@ -102,16 +105,25 @@ public class FocusJobs {
 	 * @throws IOException
 	 */
 	public List<ClassifyUnit> getCategorizedAdsFromFile(File trainingData, boolean treatEncoding, File focusesFile,
-			Boolean safeUnused) throws IOException {
+			File studiesFile, File degreesFile, Boolean safeUnused) throws IOException {
 
 		List<FocusClassifyUnit> fcus = new ArrayList<FocusClassifyUnit>();
 		List<ClassifyUnit> toReturn = new ArrayList<ClassifyUnit>();
 
-		TrainingUnitCreator tug = new TrainingUnitCreator(trainingData, focusesFile);
+		TrainingUnitCreator tug = new TrainingUnitCreator(trainingData, focusesFile, 
+				studiesFile, degreesFile);
 		fcus = tug.getTrainingData(safeUnused);
 
+
 		focusKeywords = tug.getFocusKeys();
+		studyKeywords = tug.getStudiesKeys();
+		degreeKeywords = tug.getDegreeKeys();
+
 		focusList = new ArrayList<String>(focusKeywords.keySet());
+		studyList = new ArrayList<String>(studyKeywords.keySet());
+		degreesList = new ArrayList<String>(degreeKeywords.keySet());
+
+		//TODO hier ist studyList vollständig
 
 		toReturn.addAll(fcus);
 		if (treatEncoding) {
@@ -120,6 +132,7 @@ public class FocusJobs {
 				classifyUnit.setContent(EncodingProblemTreatment.normalizeEncoding(content));
 			}
 		}
+
 		return toReturn;
 	}
 
@@ -142,12 +155,14 @@ public class FocusJobs {
 		List<ClassifyUnit> toProcess = new ArrayList<ClassifyUnit>();
 		/** */
 		for (ClassifyUnit jobAd : trainingData) {
-
+			//TODO warum neue objekte erzeugen??
 			FocusClassifyUnit newUnit = new FocusClassifyUnit(jobAd.getContent(), jobAd.getID(), 
 					((FocusClassifyUnit) jobAd).getContentHTML());
 			String title = ((FocusClassifyUnit) jobAd).getTitle();
 			newUnit.setTitle(title);
 			newUnit.setInFocus(((FocusClassifyUnit) jobAd).getInFocus());
+			newUnit.setDegrees(((FocusClassifyUnit) jobAd).getDegrees());
+			newUnit.setStudySubjects(((FocusClassifyUnit) jobAd).getStudySubjects());
 			List<String> tokens = tokenizer.tokenize(newUnit.getContent());
 			if (tokens == null)
 				continue;
@@ -367,6 +382,43 @@ public class FocusJobs {
 
 		return classified;
 	}
+	
+	public List<ClassifyUnit> extractStudySubjects(List<ClassifyUnit> toAnnotate,
+			ExperimentConfiguration expConfig, Model model) throws IOException{
+		
+		AbstractExtractor extractor = new StudyExtractor(studyKeywords);
+		
+//		Map<ClassifyUnit, Map<String, Boolean>> extracted = new HashMap<ClassifyUnit, Map<String, Boolean>>();
+		
+		
+		for (ClassifyUnit classifyUnit : toAnnotate) {
+			
+			FocusClassifyUnit fcu = ((FocusClassifyUnit) classifyUnit);
+			
+			Map<String, Boolean> extractedStudies = extractor.extract(fcu);
+//			extracted.put(fcu, extractedStudies);
+			fcu.setExtractedStudies(extractedStudies);
+			
+		}
+		
+		return toAnnotate;
+	}
+	
+	public List<ClassifyUnit> extractDegrees(List<ClassifyUnit> toAnnotate,
+			ExperimentConfiguration expConfig, Model model) throws IOException{
+		
+		AbstractExtractor extractor = new DegreeExtractor(degreeKeywords);
+		
+		for (ClassifyUnit classifyUnit : toAnnotate){
+			FocusClassifyUnit fcu = ((FocusClassifyUnit) classifyUnit);
+			
+			Map<String, Boolean> extractedDegrees = extractor.extract(fcu);
+			fcu.setExtractedDegrees(extractedDegrees);
+		}
+		
+		
+		return toAnnotate;
+	}
 
 	/**
 	 * exports classified Data to .xlsx-File
@@ -402,25 +454,37 @@ public class FocusJobs {
 		for (Map.Entry<ClassifyUnit, Map<String, Boolean>> e : classifiedFocus.entrySet()) {
 
 			FocusClassifyUnit fcu = ((FocusClassifyUnit) e.getKey());
-			Map<String, Boolean> focuses = e.getValue();
+			Map<String, Boolean> focusesMap = e.getValue();
+			Map<String, Boolean> studiesMap = fcu.getExtractedStudies();
+			Map<String, Boolean> degreesMap = fcu.getExtractedDegrees();
 
-			String result = "";
+			String classified = "";
 			if (outputRanking)
-				result = getRanking(fcu.getRanking());
+				classified = getRanking(fcu.getRanking());
 			else
-				result = getFocuses(focuses);
+				classified = getFocuses(focusesMap);
+			
+			String studies = getFocuses(studiesMap);
+			String degrees = getFocuses(degreesMap);
+			
 
 			r = sheet.createRow(row);
 			// title
 			cell = r.createCell(0);
 			cell.setCellValue(fcu.getTitle());
-			// content without html
+			// content with html
 			cell = r.createCell(1);
 			cell.setCellValue(fcu.getContentHTML());
+			// studies extracted
+			cell = r.createCell(2);
+			cell.setCellValue(studies);
 			// focus classified
 			cell = r.createCell(3);
-			cell.setCellValue(result);
+			cell.setCellValue(classified);
 			row++;
+			// degrees extracted
+			cell = r.createCell(4);
+			cell.setCellValue(degrees);
 		}
 
 		wb.write(fos);
@@ -486,8 +550,14 @@ public class FocusJobs {
 			List<ClassifyUnit> testSet = testSets.getTestSet();
 			// System.out.println("Get Model...");
 			Model model = getModelForClassifier(trainingSet, expConfig);
+			
+//			System.out.println("Extract Study Subjects...");
+			testSet = extractStudySubjects(testSet, expConfig, model);
+			
+//			System.out.println("Extract Degrees...");
+			testSet = extractDegrees(testSet, expConfig, model);
 
-			// System.out.println("Classify...");
+//			 System.out.println("Classify...");
 			classified.putAll(classify(testSet, expConfig, model));
 		}
 
@@ -501,34 +571,37 @@ public class FocusJobs {
 	 * @param expConfig
 	 * @return
 	 */
-	public MLExperimentResult evaluateML(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> categories,
+	public Map<String,MLExperimentResult> evaluateML(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> categories,
 			ExperimentConfiguration expConfig) {
+		
 		MLEvaluator evaluator = new MLEvaluator();
-		evaluator.evaluate(classified, categories, focusList);
+//		FocusEvaluator evaluator = new FocusEvaluator();
+		Map<String, MLExperimentResult> results = evaluator.evaluate(classified, expConfig, categories, 
+				focusList, studyList, degreesList);
 
-		MLExperimentResult er = new MLExperimentResult();
-		er.setExperimentConfiguration(expConfig.toString());
-		er.setHammingLoss(evaluator.getHammingLoss());
-		er.setMaxLoss(evaluator.getMaxLoss());
-		er.setOneError(evaluator.getOneError());
-		er.setCoverage(evaluator.getCoverage());
-		// er.setTotalCorrect(evaluator.getTotalCorrect());
-		er.setNumberOfEvalData(classified.size());
-		er.setAccuracy(evaluator.getOverallAccuracy());
-		er.setF1Measure(evaluator.getOverallF1Score());
-		er.setPrecision(evaluator.getOverallPrecision());
-		er.setAverPrec(evaluator.getAverPrec());
-		er.setAverRec(evaluator.getAverRec());
-		er.setAverF1(evaluator.getAverF1());
-		er.setClassificationAccuracy(evaluator.getClassAccuracy());
-		er.setRecall(evaluator.getOverallRecall());
-		er.setTN(evaluator.getOverallTNs());
-		er.setTP(evaluator.getOverallTPs());
-		er.setFN(evaluator.getOverallFNs());
-		er.setFP(evaluator.getOverallFPs());
-		er.setMisClassified(evaluator.getMisclassified());
-		er.setMLCategoryEvaluations(evaluator.getCategoryEvaluations());
-		return er;
+//		MLExperimentResult er = new MLExperimentResult();
+//		er.setExperimentConfiguration(expConfig.toString());
+//		er.setHammingLoss(evaluator.getHammingLoss());
+//		er.setMaxLoss(evaluator.getMaxLoss());
+//		er.setOneError(evaluator.getOneError());
+//		er.setCoverage(evaluator.getCoverage());
+//		// er.setTotalCorrect(evaluator.getTotalCorrect());
+//		er.setNumberOfEvalData(classified.size());
+//		er.setAccuracy(evaluator.getOverallAccuracy());
+//		er.setF1Measure(evaluator.getOverallF1Score());
+//		er.setPrecision(evaluator.getOverallPrecision());
+//		er.setAverPrec(evaluator.getAverPrec());
+//		er.setAverRec(evaluator.getAverRec());
+//		er.setAverF1(evaluator.getAverF1());
+//		er.setClassificationAccuracy(evaluator.getClassAccuracy());
+//		er.setRecall(evaluator.getOverallRecall());
+//		er.setTN(evaluator.getOverallTNs());
+//		er.setTP(evaluator.getOverallTPs());
+//		er.setFN(evaluator.getOverallFNs());
+//		er.setFP(evaluator.getOverallFPs());
+//		er.setMisClassified(evaluator.getMisclassified());
+//		er.setMLCategoryEvaluations(evaluator.getCategoryEvaluations());
+		return results;
 	}
 
 	/**

@@ -28,7 +28,11 @@ public class DefaultFeatureGenerator {
 
 	static String outputFolder = "classification/output";
 	
-	static File focusesFile = new File("classification/data/trainingSets/getIn_focuses.xlsx");
+	static File focusesFile = new File("classification/data/trainingSets/focuses.xlsx");
+	
+	static File studiesFile = new File("ml_classification/data/studysubjects.xlsx");
+	
+	static File degreesFile = new File("ml_classification/data/degrees.xlsx");
 	
 	static boolean allowEmptyLabelmap = true;
 	
@@ -77,7 +81,7 @@ public class DefaultFeatureGenerator {
 							
 							List<ClassifyUnit> data = null;
 							data = jobs.getCategorizedAdsFromFile(trainingDataFile, 
-									fuc.isTreatEncoding(), focusesFile, safeUnusedUnits);
+									fuc.isTreatEncoding(), focusesFile, studiesFile, degreesFile, safeUnusedUnits);
 							data = jobs.initializeClassifyUnits(data, true);
 							data = jobs.setFeatures(data, fuc, true);
 							data = jobs.setFeatureVectors(data, fq, null);

@@ -43,6 +43,9 @@ public class JobAdClassificationApp {
 								// File("ml_classification/data/trainingSets/getIn_JobAdDB_great.xlsx");
 	static File focusesFile;// = new
 							// File("ml_classification/data/getIn_focuses.xlsx");
+	static File studiesFile = new File("ml_classification/data/studysubjects.xlsx");
+	
+	static File degreesFile = new File("ml_classification/data/degrees.xlsx");// TODO in config-Datei übertragen
 	static boolean safeUnusedUnits = false;
 	/** use serialized data (training & classified) to evaluate */
 	static boolean useSavedData = false;
@@ -102,8 +105,8 @@ public class JobAdClassificationApp {
 		ExperimentConfiguration expConfig = new ExperimentConfiguration(fuc, quantifier, classifier, inputFile,
 				outputFolder);
 		List<ClassifyUnit> trainingData = null;
-		trainingData = jobs.getCategorizedAdsFromFile(trainingFile,
-				expConfig.getFeatureConfiguration().isTreatEncoding(), focusesFile, safeUnusedUnits);
+		trainingData = jobs.getCategorizedAdsFromFile(trainingFile, expConfig.getFeatureConfiguration().isTreatEncoding(), 
+				focusesFile, studiesFile, degreesFile, safeUnusedUnits);
 		System.out.println("added " + trainingData.size() + " training-Ads");
 
 		// initialize Classify Units, Features, Vectors...
@@ -122,7 +125,11 @@ public class JobAdClassificationApp {
 		toAnnotate = jobs.initializeClassifyUnits(toAnnotate, false);
 		toAnnotate = jobs.setFeatures(toAnnotate, expConfig.getFeatureConfiguration(), false);
 		toAnnotate = jobs.setFeatureVectors(toAnnotate, expConfig.getFeatureQuantifier(), model.getFUOrder());
-		// classify
+		// extract study subjects
+		toAnnotate = jobs.extractStudySubjects(toAnnotate, expConfig, model);
+		// extract degrees
+		toAnnotate = jobs.extractDegrees(toAnnotate, expConfig, model);
+		// classify focuses
 		Map<ClassifyUnit, Map<String, Boolean>> classifiedFocus = jobs.classify(toAnnotate, expConfig, model);
 
 		// output

@@ -1,6 +1,6 @@
 inputFile:ml_classification/input/toAnnotate.xlsx
 outputFolder:ml_classification/output
-trainingFile:ml_classification/data/trainingSets/training_greatminus10.xlsx
+trainingFile:ml_classification/data/trainingSets/training_greatminus.xlsx
 focusesFile:ml_classification/data/focuses.xlsx
 ignoreStopwords:true
 normalizeInput:true

@@ -20,17 +20,27 @@ public class FocusClassifyUnit extends ClassifyUnit implements Serializable{
 
 	private Map<String, Boolean> inFocus = new HashMap<String, Boolean>();
 	
+	private Map<String, Boolean> studySubjects = new HashMap<String, Boolean>();
+	
+	private Map<String, Boolean> degrees = new HashMap<String, Boolean>();
+	
+	private Map<String, Boolean> extractedStudies = new HashMap<String, Boolean>();
+	
+	private Map<String, Boolean> extractedDegrees = new HashMap<String, Boolean>();
+	
 	private String title;
 	
 	private String contentHTML;
 	
-	private Set<String> studySubjects, degrees;
+//	private Set<String> degrees;
 	
 	private List<FocusClassifyUnit> neighbors;
 	
 	private Map<String, Integer> neighborFocusCount;
 
 	private Map<String, Double> ranking;
+
+	
 
 	public FocusClassifyUnit(String content, UUID id) {
 		super(content, id);
@@ -113,20 +123,36 @@ public class FocusClassifyUnit extends ClassifyUnit implements Serializable{
 		return ranking;
 	}
 
-	public Set<String> getStudySubjects() {
+	public Map<String, Boolean> getStudySubjects() {
 		return studySubjects;
 	}
 
-	public void setStudySubjects(Set<String> studySubjects) {
+	public void setStudySubjects(Map<String, Boolean> studySubjects) {
 		this.studySubjects = studySubjects;
 	}
 
-	public Set<String> getDegrees() {
+	public Map<String, Boolean> getDegrees() {
 		return degrees;
 	}
 
-	public void setDegrees(Set<String> degrees) {
+	public void setDegrees(Map<String, Boolean> degrees) {
 		this.degrees = degrees;
+	}
+
+	public Map<String, Boolean> getExtractedStudies() {
+		return extractedStudies;
+	}
+
+	public void setExtractedStudies(Map<String, Boolean> extractedStudies) {
+		this.extractedStudies = extractedStudies;
+	}
+	
+	public Map<String, Boolean> getExtractedDegrees() {
+		return extractedDegrees;
+	}
+
+	public void setExtractedDegrees(Map<String, Boolean> extractedDegrees) {
+		this.extractedDegrees = extractedDegrees;
 	}
 	
 	

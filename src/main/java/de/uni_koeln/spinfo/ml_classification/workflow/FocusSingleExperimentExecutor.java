@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uni_koeln.spinfo.ml_classification.classifiers.KeywordClassifier;
-import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 import de.uni_koeln.spinfo.classification.core.data.ExperimentConfiguration;
+import de.uni_koeln.spinfo.ml_classification.classifiers.KeywordClassifier;
+import de.uni_koeln.spinfo.ml_classification.data.FocusClassifyUnit;
+import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
 
 
 public class FocusSingleExperimentExecutor {
@@ -26,14 +27,16 @@ public class FocusSingleExperimentExecutor {
 	 * @return result of cross validation
 	 * @throws IOException
 	 */
-	public static MLExperimentResult crossValidate(ExperimentConfiguration expConfig, FocusJobs jobs, boolean preClassify,
-			List<String> evaluationCategories, File focusesFile, Boolean safeUnused) throws IOException {
+	public static Map<String, MLExperimentResult> crossValidate(ExperimentConfiguration expConfig, FocusJobs jobs, boolean preClassify,
+			List<String> evaluationCategories, File focusesFile,
+			File studiesFile, File degreesFile, Boolean safeUnused) throws IOException {
 		long before = System.nanoTime();
 		// prepare classifyUnits...
 		List<ClassifyUnit> paragraphs = null;
 		paragraphs = jobs.getCategorizedAdsFromFile(expConfig.getDataFile(),
-				expConfig.getFeatureConfiguration().isTreatEncoding(), focusesFile, safeUnused);
-
+				expConfig.getFeatureConfiguration().isTreatEncoding(), 
+				focusesFile, studiesFile, degreesFile, safeUnused);
+		
 		System.out.println(paragraphs.size() + " JobsAds in training data");
 		long after = System.nanoTime();
 //		System.out.println("prepare CUs: " + (after - before) / 1000000000d);
@@ -101,7 +104,7 @@ public class FocusSingleExperimentExecutor {
 		
 		// evaluate
 		before = System.nanoTime();
-		MLExperimentResult result = jobs.evaluateML(classified, evaluationCategories, expConfig);
+		Map<String,MLExperimentResult> results = jobs.evaluateML(classified, evaluationCategories, expConfig);
 		after = System.nanoTime();
 //		System.out.println("evaluate: " + (after - before) / 1000000000d);
 		before = System.nanoTime();
@@ -109,7 +112,7 @@ public class FocusSingleExperimentExecutor {
 //		Util.exportmisclassifiedtoXLSX("misclassified.xlsx", misClassified);
 //		System.out.println("export mis-classified: " + (after - before) / 1000000000d);
 		after = System.nanoTime();
-		return result;
+		return results;
 	}
 
 }

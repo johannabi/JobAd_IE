@@ -69,9 +69,12 @@ public class ConfigurableDBClassifier {
 		// create training File
 		File trainingDataFile = new File(trainingFileName);
 		File focusesFile = new File(focusesFileName);
+		File studiesFile = new File("ml_classification/data/studysubjects.xlsx");
+		File degreesFile = new File("ml_classification/data/degrees.xlsx");
 		List<ClassifyUnit> trainingData = null; 
 		trainingData = jobs.getCategorizedAdsFromFile(trainingDataFile, 
-				expConfig.getFeatureConfiguration().isTreatEncoding(), focusesFile, true);
+				expConfig.getFeatureConfiguration().isTreatEncoding(), 
+				focusesFile, studiesFile, degreesFile, true);
 		System.out.println("added " + trainingData.size() + " training-Ads");
 		
 

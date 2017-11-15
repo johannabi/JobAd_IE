@@ -4,7 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import de.uni_koeln.spinfo.classification.core.data.ExperimentConfiguration;
+import de.uni_koeln.spinfo.classification.core.data.FeatureUnitConfiguration;
+import de.uni_koeln.spinfo.classification.core.distance.Distance;
+import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.AbstractFeatureQuantifier;
+import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.LogLikeliHoodFeatureQuantifier;
+import de.uni_koeln.spinfo.classification.zoneAnalysis.data.CategoryResult;
+import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ExperimentResult;
 import de.uni_koeln.spinfo.ml_classification.classifiers.FocusAbstractClassifier;
 import de.uni_koeln.spinfo.ml_classification.classifiers.FocusMLKNNClassifier;
 import de.uni_koeln.spinfo.ml_classification.classifiers.FocusNaiveBayesClassifier;
@@ -12,16 +20,6 @@ import de.uni_koeln.spinfo.ml_classification.data.MLCategoryResult;
 import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
 import de.uni_koeln.spinfo.ml_classification.workflow.FocusJobs;
 import de.uni_koeln.spinfo.ml_classification.workflow.FocusSingleExperimentExecutor;
-import de.uni_koeln.spinfo.classification.core.data.ExperimentConfiguration;
-import de.uni_koeln.spinfo.classification.core.data.FeatureUnitConfiguration;
-import de.uni_koeln.spinfo.classification.core.distance.Distance;
-import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.AbsoluteFrequencyFeatureQuantifier;
-import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.AbstractFeatureQuantifier;
-import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.LogLikeliHoodFeatureQuantifier;
-import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.RelativeFrequencyFeatureQuantifier;
-import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.TFIDFFeatureQuantifier;
-import de.uni_koeln.spinfo.classification.zoneAnalysis.data.CategoryResult;
-import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ExperimentResult;
 
 /**
  * 
@@ -46,6 +44,10 @@ public class DefaultExperimentGenerator {
 	static String outputFolder = "ml_classification/output";
 	
 	static File focusesFile = new File("ml_classification/data/focuses.xlsx");
+	
+	static File studiesFile = new File("ml_classification/data/studysubjects.xlsx");
+	
+	static File degreesFile = new File("ml_classification/data/degrees.xlsx");
 	
 	static List<String> evaluationCategories;
 	
@@ -76,8 +78,8 @@ public class DefaultExperimentGenerator {
 
 			for (AbstractFeatureQuantifier fq : quantifiers) {
 
-				List<ExperimentResult> results = new ArrayList<ExperimentResult>(); 
-				MLExperimentResult result = null;
+				List<ExperimentResult> resultList = new ArrayList<ExperimentResult>(); 
+				Map<String, MLExperimentResult> result = null;
 
 				for (int suffixTrees = 0; suffixTrees <= 0; suffixTrees++) { //kein Suffixtree
 
@@ -118,40 +120,41 @@ public class DefaultExperimentGenerator {
 									System.out.println("expConfig: " + expConfig.toString());
 
 									result = FocusSingleExperimentExecutor.crossValidate(expConfig, jobs,
-											preClassify, evaluationCategories, focusesFile, safeUnusedUnits);
-									results.add(result);
-									System.out.println("++++");
-									List<MLCategoryResult> catResults = result.getMLCategoryEvaluations();
-									for (CategoryResult cr : catResults) {
-										System.out.println("TP: " + cr.getTP() + " - FP: " + cr.getFP() + " - FN: " 
-												+ cr.getFN() + " - TN: " + cr.getTN());
-										System.out.println(cr);			
-									}
-									System.out.println("++++");
-									System.out.println(result.getMacroAveraging());
-									System.out.println(result.getMicroAveraging());
-									
-									System.out.println("Hamming Loss: \t" + result.getHammingLoss());
-									System.out.println("One Error: \t" + result.getOneError());
-									System.out.println("Coverage: \t" + result.getCoverage());
-
-									System.out.println("Average Precision: " + result.getAverPrec());
-									System.out.println("Precision: " + result.getPrecision());
-									System.out.println("Average Recall: " + result.getAverRec());
-									System.out.println("Recall: " + result.getRecall());
-									System.out.println("F-Measure: " + result.getF1Measure());
-									System.out.println("Average F-Measure: " + result.getAverF1());
-									System.out.println("Accuracy: " + result.getAccuracy());
-									System.out.println("Classification Accuracy: " + result.getClassificationAccuracy());
-									System.out.println("---------------------------------------------");
+											preClassify, evaluationCategories, focusesFile, 
+											studiesFile, degreesFile, safeUnusedUnits);
+//									resultList.add(result);
+//									System.out.println("++++");
+//									List<MLCategoryResult> catResults = result.getMLCategoryEvaluations();
+//									for (CategoryResult cr : catResults) {
+//										System.out.println("TP: " + cr.getTP() + " - FP: " + cr.getFP() + " - FN: " 
+//												+ cr.getFN() + " - TN: " + cr.getTN());
+//										System.out.println(cr);			
+//									}
+//									System.out.println("++++");
+//									System.out.println(result.getMacroAveraging());
+//									System.out.println(result.getMicroAveraging());
+//									
+//									System.out.println("Hamming Loss: \t" + result.getHammingLoss());
+//									System.out.println("One Error: \t" + result.getOneError());
+//									System.out.println("Coverage: \t" + result.getCoverage());
+//
+//									System.out.println("Average Precision: " + result.getAverPrec());
+//									System.out.println("Precision: " + result.getPrecision());
+//									System.out.println("Average Recall: " + result.getAverRec());
+//									System.out.println("Recall: " + result.getRecall());
+//									System.out.println("F-Measure: " + result.getF1Measure());
+//									System.out.println("Average F-Measure: " + result.getAverF1());
+//									System.out.println("Accuracy: " + result.getAccuracy());
+//									System.out.println("Classification Accuracy: " + result.getClassificationAccuracy());
+//									System.out.println("---------------------------------------------");
 								}
 							}
 						}
 					}
 				}
 				// write Results...
-				jobs.persistExperimentResults(results, resultsOutputFile);
-				jobs.exportResults(results,resultsOutputFile);
+				jobs.persistExperimentResults(resultList, resultsOutputFile);
+				jobs.exportResults(resultList,resultsOutputFile);
 
 				if (classifier instanceof FocusNaiveBayesClassifier) {
 					break;

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,9 @@ import de.uni_koeln.spinfo.classification.core.data.FeatureUnitConfiguration;
 import de.uni_koeln.spinfo.classification.core.distance.Distance;
 import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.AbstractFeatureQuantifier;
 import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.LogLikeliHoodFeatureQuantifier;
-import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighting.TFIDFFeatureQuantifier;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.CategoryResult;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ExperimentResult;
 import de.uni_koeln.spinfo.ml_classification.classifiers.FocusAbstractClassifier;
-import de.uni_koeln.spinfo.ml_classification.classifiers.FocusMLKNNClassifier;
 import de.uni_koeln.spinfo.ml_classification.classifiers.FocusNaiveBayesClassifier;
 import de.uni_koeln.spinfo.ml_classification.data.MLCategoryResult;
 import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
@@ -35,10 +34,12 @@ public class SingleExperimentExecution {
 	/////////////////////////////
 	// APP-CONFIGURATION
 	/////////////////////////////
-
-	static File inputFile = new File("ml_classification/data/trainingSets/getIn_JobAdDB_great.xlsx");
+	static File inputFile = new File("ml_classification/data/trainingSets/getIn_JobAdDB.xlsx");
+//	static File inputFile = new File("ml_classification/data/trainingSets/content_export_new.xlsx");
 	static String outputFolder = "ml_classification/output";
-	static File focusesFile = new File("ml_classification/data/getIn_focuses.xlsx");
+	static File focusesFile = new File("ml_classification/data/focuses.xlsx");
+	static File studiesFile = new File("ml_classification/data/studysubjects.xlsx");
+	static File degreesFile = new File("ml_classification/data/degrees.xlsx");
 	static boolean safeUnusedUnits = false;
 	/** use serialized data (training & classified) to evaluate */
 	static boolean useSavedData = false;
@@ -72,7 +73,7 @@ public class SingleExperimentExecution {
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		
 		FocusJobs jobs = new FocusJobs(allowEmptyLabelMap);
-		MLExperimentResult result = new MLExperimentResult();
+		Map<String,MLExperimentResult> results = new HashMap<String,MLExperimentResult>();
 		
 //		evaluationCategories = new ArrayList<String>();
 //		evaluationCategories.add("Administration");
@@ -99,45 +100,51 @@ public class SingleExperimentExecution {
 			
 			ois.close();
 			
-			result = jobs.evaluateML(classified, evaluationCategories, expConfig);
+			results = jobs.evaluateML(classified, evaluationCategories, expConfig);
 		} else {
 			
 			FeatureUnitConfiguration fuc = new FeatureUnitConfiguration(normalizeInput, useStemmer, ignoreStopwords, nGrams,
 					false, miScoredFeaturesPerClass, suffixTrees);
 			ExperimentConfiguration expConfig = new ExperimentConfiguration(fuc, quantifier, classifier, inputFile,
 					outputFolder);
-			result = FocusSingleExperimentExecutor.crossValidate(expConfig, jobs, preClassify,
-					evaluationCategories, focusesFile, safeUnusedUnits);
+			results = FocusSingleExperimentExecutor.crossValidate(expConfig, jobs, preClassify,
+					evaluationCategories, focusesFile, studiesFile, degreesFile, safeUnusedUnits);
 		}
 
-		List<MLCategoryResult> catResults = result.getMLCategoryEvaluations();
-		for (CategoryResult cr : catResults) {
-			System.out.println("TP: " + cr.getTP() + " - FP: " + cr.getFP() + " - FN: " 
-					+ cr.getFN() + " - TN: " + cr.getTN());
-			System.out.println(cr);			
+		for(Map.Entry<String, MLExperimentResult> e : results.entrySet()){
+			System.out.println("++++" + e.getKey() + "++++");
+			MLExperimentResult result = e.getValue();
+			List<MLCategoryResult> catResults = result.getMLCategoryEvaluations();
+			for (CategoryResult cr : catResults) {
+				System.out.println("TP: " + cr.getTP() + " - FP: " + cr.getFP() + " - FN: " 
+						+ cr.getFN() + " - TN: " + cr.getTN());
+				System.out.println(cr);			
+			}
+			System.out.println(result.getMacroAveraging());
+			System.out.println(result.getMicroAveraging());
+
+			System.out.println("Hamming Loss: \t" + result.getHammingLoss());
+			System.out.println("One Error: \t" + result.getOneError());
+			System.out.println("Coverage: \t" + result.getCoverage());
+			
+			System.out.println("Average Precision: " + result.getAverPrec());
+			System.out.println("Precision: " + result.getPrecision());
+			System.out.println("Average Recall: " + result.getAverRec());
+			System.out.println("Recall: " + result.getRecall());
+			System.out.println("F-Measure: " + result.getF1Measure());
+			System.out.println("Average F-Measure: " + result.getAverF1());
+			System.out.println("Accuracy: " + result.getAccuracy());
+			System.out.println("Classification Accuracy: " + result.getClassificationAccuracy());
+			
+			
+
+			// store result
+			 jobs.persistExperimentResult(result, resultOutputFolder);
+			 List<ExperimentResult> resultsList = new ArrayList<ExperimentResult>();
+			 resultsList.add(result);
+			 jobs.exportResults(resultsList,resultOutputFolder);
 		}
-		System.out.println(result.getMacroAveraging());
-		System.out.println(result.getMicroAveraging());
-
-		System.out.println("Hamming Loss: \t" + result.getHammingLoss());
-		System.out.println("One Error: \t" + result.getOneError());
-		System.out.println("Coverage: \t" + result.getCoverage());
-		
-		System.out.println("Average Precision: " + result.getAverPrec());
-		System.out.println("Precision: " + result.getPrecision());
-		System.out.println("Average Recall: " + result.getAverRec());
-		System.out.println("Recall: " + result.getRecall());
-		System.out.println("F-Measure: " + result.getF1Measure());
-		System.out.println("Average F-Measure: " + result.getAverF1());
-		System.out.println("Accuracy: " + result.getAccuracy());
-		System.out.println("Classification Accuracy: " + result.getClassificationAccuracy());
 		
 		
-
-		// store result
-		 jobs.persistExperimentResult(result, resultOutputFolder);
-		 List<ExperimentResult> results = new ArrayList<ExperimentResult>();
-		 results.add(result);
-		 jobs.exportResults(results,resultOutputFolder);
 	}
 }

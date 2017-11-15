@@ -17,14 +17,17 @@ import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 public class DataAnalyzeApp {
 	
 	static File trainingData = new File("ml_classification/data/trainingSets/getIn_JobAdDB_great.xlsx");
-	static File focusesFile = new File("ml_classification/data/getIn_focuses.xlsx");
+	static File focusesFile = new File("ml_classification/data/focuses.xlsx");
+	static File studiesFile = new File("ml_classification/data/studysubjects.xlsx");
+	static File degreesFile = new File("ml_classification/data/degrees.xlsx");
 	static boolean allowEmptyLabelmap = true;
 
 	public static void main(String[] args) throws IOException {
 
 		FocusJobs jobs = new FocusJobs();
 		
-		List<ClassifyUnit> data = jobs.getCategorizedAdsFromFile(trainingData, true, focusesFile, false);
+		List<ClassifyUnit> data = jobs.getCategorizedAdsFromFile(trainingData, true, focusesFile,
+				studiesFile, degreesFile, false);
 		String result = jobs.analyzeData(data);
 		Util.writeTXTFile(result, "dataStatistics.txt");
 	}
