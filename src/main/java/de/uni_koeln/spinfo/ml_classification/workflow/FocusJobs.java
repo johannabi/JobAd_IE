@@ -79,6 +79,15 @@ public class FocusJobs {
 		suffixTreeBuilder = new SuffixTreeFeatureGenerator();
 	}
 	
+	public FocusJobs(String stopwordsFile) throws IOException {
+
+		sw_filter = new StopwordFilter(new File(stopwordsFile));
+		normalizer = new Normalizer();
+		stemmer = new Stemmer();
+		tokenizer = new FeatureUnitTokenizer();
+		suffixTreeBuilder = new SuffixTreeFeatureGenerator();
+	}
+	
 	public FocusJobs() throws IOException {
 		sw_filter = new StopwordFilter(new File("ml_classification/data/stopwords.txt"));
 		normalizer = new Normalizer();
