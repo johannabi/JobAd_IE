@@ -3,6 +3,7 @@ package de.uni_koeln.spinfo.ml_classification.workflow;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -78,7 +79,7 @@ public class FocusJobs {
 		tokenizer = new FeatureUnitTokenizer();
 		suffixTreeBuilder = new SuffixTreeFeatureGenerator();
 	}
-	
+
 	public FocusJobs(String stopwordsFile) throws IOException {
 
 		sw_filter = new StopwordFilter(new File(stopwordsFile));
@@ -87,13 +88,25 @@ public class FocusJobs {
 		tokenizer = new FeatureUnitTokenizer();
 		suffixTreeBuilder = new SuffixTreeFeatureGenerator();
 	}
-	
+
 	public FocusJobs() throws IOException {
 		sw_filter = new StopwordFilter(new File("ml_classification/data/stopwords.txt"));
 		normalizer = new Normalizer();
 		stemmer = new Stemmer();
 		tokenizer = new FeatureUnitTokenizer();
 		suffixTreeBuilder = new SuffixTreeFeatureGenerator();
+	}
+
+	public Set<String> getFocuses() {
+		return focusKeywords.keySet();
+	}
+
+	public Set<String> getStudySubjects() {
+		return studyKeywords.keySet();
+	}
+
+	public Set<String> getDegrees() {
+		return degreeKeywords.keySet();
 	}
 
 	public Map<String, List<String>> getKeywords() {
@@ -119,10 +132,8 @@ public class FocusJobs {
 		List<FocusClassifyUnit> fcus = new ArrayList<FocusClassifyUnit>();
 		List<ClassifyUnit> toReturn = new ArrayList<ClassifyUnit>();
 
-		TrainingUnitCreator tug = new TrainingUnitCreator(trainingData, focusesFile, 
-				studiesFile, degreesFile);
+		TrainingUnitCreator tug = new TrainingUnitCreator(trainingData, focusesFile, studiesFile, degreesFile);
 		fcus = tug.getTrainingData(safeUnused);
-
 
 		focusKeywords = tug.getFocusKeys();
 		studyKeywords = tug.getStudiesKeys();
@@ -132,7 +143,7 @@ public class FocusJobs {
 		studyList = new ArrayList<String>(studyKeywords.keySet());
 		degreesList = new ArrayList<String>(degreeKeywords.keySet());
 
-		//TODO hier ist studyList vollständig
+		// TODO hier ist studyList vollständig
 
 		toReturn.addAll(fcus);
 		if (treatEncoding) {
@@ -146,14 +157,14 @@ public class FocusJobs {
 	}
 
 	/**
-	 * initializes incoming Classify Units by creating Focus Classify Units for
-	 * each and tokenizing their content
+	 * initializes incoming Classify Units by creating Focus Classify Units for each
+	 * and tokenizing their content
 	 * 
 	 * @param trainingData
 	 *            Classify Units to initialize
 	 * @param startNew
-	 *            set true if it's a new run (important for cross validation;
-	 *            set of all tokens will be initialized
+	 *            set true if it's a new run (important for cross validation; set of
+	 *            all tokens will be initialized
 	 * @return
 	 */
 	public List<ClassifyUnit> initializeClassifyUnits(List<ClassifyUnit> trainingData, Boolean startNew) {
@@ -164,8 +175,8 @@ public class FocusJobs {
 		List<ClassifyUnit> toProcess = new ArrayList<ClassifyUnit>();
 		/** */
 		for (ClassifyUnit jobAd : trainingData) {
-			//TODO warum neue objekte erzeugen??
-			FocusClassifyUnit newUnit = new FocusClassifyUnit(jobAd.getContent(), jobAd.getID(), 
+			// TODO warum neue objekte erzeugen??
+			FocusClassifyUnit newUnit = new FocusClassifyUnit(jobAd.getContent(), jobAd.getID(),
 					((FocusClassifyUnit) jobAd).getContentHTML());
 			String title = ((FocusClassifyUnit) jobAd).getTitle();
 			newUnit.setTitle(title);
@@ -184,11 +195,16 @@ public class FocusJobs {
 	}
 
 	/**
-	 * selects features for each ClassifyUnit according to the given FeatureUnitConfiguration
-	 * @param trainingData contains all data
-	 * @param fuc contains the given configuration to create features
-	 * @param trainingPhase set true, if it's the training data, so the list of all tokens
-	 * will be set
+	 * selects features for each ClassifyUnit according to the given
+	 * FeatureUnitConfiguration
+	 * 
+	 * @param trainingData
+	 *            contains all data
+	 * @param fuc
+	 *            contains the given configuration to create features
+	 * @param trainingPhase
+	 *            set true, if it's the training data, so the list of all tokens
+	 *            will be set
 	 * @return ClassifyUnits with feature sets
 	 */
 	public List<ClassifyUnit> setFeatures(List<ClassifyUnit> trainingData, FeatureUnitConfiguration fuc,
@@ -234,9 +250,13 @@ public class FocusJobs {
 
 	/**
 	 * sets feature weighting according to the given feature quantifier
-	 * @param trainingData all data the should receive a feature vector
-	 * @param fq feature quantifier to weight features
-	 * @param featureUnitOrder list of features that should be weighted
+	 * 
+	 * @param trainingData
+	 *            all data the should receive a feature vector
+	 * @param fq
+	 *            feature quantifier to weight features
+	 * @param featureUnitOrder
+	 *            list of features that should be weighted
 	 * @return ClassifyUnits that contain weighted feature vectors
 	 */
 	public List<ClassifyUnit> setFeatureVectors(List<ClassifyUnit> trainingData, AbstractFeatureQuantifier fq,
@@ -302,7 +322,9 @@ public class FocusJobs {
 
 	/**
 	 * creates FocusClassifyUnits for each Job Ad that should be classified
-	 * @param dataToAnnotate Job Ads
+	 * 
+	 * @param dataToAnnotate
+	 *            Job Ads
 	 * @param treatEncoding
 	 * @return List of FocusClassifyUnit that should be classified
 	 * @throws IOException
@@ -339,6 +361,7 @@ public class FocusJobs {
 
 	/**
 	 * deletes html tags from a String
+	 * 
 	 * @param jobAdContent
 	 * @return
 	 */
@@ -358,8 +381,8 @@ public class FocusJobs {
 	}
 
 	/**
-	 * classifies the JobAds to annotate with the given model, configurations
-	 * and classifier
+	 * classifies the JobAds to annotate with the given model, configurations and
+	 * classifier
 	 * 
 	 * @param toAnnotate
 	 * @param expConfig
@@ -391,50 +414,51 @@ public class FocusJobs {
 
 		return classified;
 	}
-	
-	public List<ClassifyUnit> extractStudySubjects(List<ClassifyUnit> toAnnotate,
-			ExperimentConfiguration expConfig, Model model) throws IOException{
-		
+
+	public List<ClassifyUnit> extractStudySubjects(List<ClassifyUnit> toAnnotate, ExperimentConfiguration expConfig,
+			Model model) throws IOException {
+
 		AbstractExtractor extractor = new StudyExtractor(studyKeywords);
-		
-//		Map<ClassifyUnit, Map<String, Boolean>> extracted = new HashMap<ClassifyUnit, Map<String, Boolean>>();
-		
-		
+
+		// Map<ClassifyUnit, Map<String, Boolean>> extracted = new HashMap<ClassifyUnit,
+		// Map<String, Boolean>>();
+
 		for (ClassifyUnit classifyUnit : toAnnotate) {
-			
+
 			FocusClassifyUnit fcu = ((FocusClassifyUnit) classifyUnit);
-			
+
 			Map<String, Boolean> extractedStudies = extractor.extract(fcu);
-//			extracted.put(fcu, extractedStudies);
+			// extracted.put(fcu, extractedStudies);
 			fcu.setExtractedStudies(extractedStudies);
-			
+
 		}
-		
+
 		return toAnnotate;
 	}
-	
-	public List<ClassifyUnit> extractDegrees(List<ClassifyUnit> toAnnotate,
-			ExperimentConfiguration expConfig, Model model) throws IOException{
-		
+
+	public List<ClassifyUnit> extractDegrees(List<ClassifyUnit> toAnnotate, ExperimentConfiguration expConfig,
+			Model model) throws IOException {
+
 		AbstractExtractor extractor = new DegreeExtractor(degreeKeywords);
-		
-		for (ClassifyUnit classifyUnit : toAnnotate){
+
+		for (ClassifyUnit classifyUnit : toAnnotate) {
 			FocusClassifyUnit fcu = ((FocusClassifyUnit) classifyUnit);
-			
+
 			Map<String, Boolean> extractedDegrees = extractor.extract(fcu);
 			fcu.setExtractedDegrees(extractedDegrees);
 		}
-		
-		
+
 		return toAnnotate;
 	}
 
 	/**
 	 * exports classified Data to .xlsx-File
+	 * 
 	 * @param classifiedFocus
 	 * @param outputFile
-	 * @param outputRanking set true, if ranking vector should be written, set
-	 *  false if definite labels should be written
+	 * @param outputRanking
+	 *            set true, if ranking vector should be written, set false if
+	 *            definite labels should be written
 	 * @throws IOException
 	 */
 	public void exportClassifiedData(Map<ClassifyUnit, Map<String, Boolean>> classifiedFocus, File outputFile,
@@ -472,10 +496,9 @@ public class FocusJobs {
 				classified = getRanking(fcu.getRanking());
 			else
 				classified = getFocuses(focusesMap);
-			
+
 			String studies = getFocuses(studiesMap);
 			String degrees = getFocuses(degreesMap);
-			
 
 			r = sheet.createRow(row);
 			// title
@@ -533,8 +556,9 @@ public class FocusJobs {
 	}
 
 	/**
-	 * cross validates the given experiment configurations with the given ClassifyUnits
-	 * Number of cross-validation groups is 10
+	 * cross validates the given experiment configurations with the given
+	 * ClassifyUnits Number of cross-validation groups is 10
+	 * 
 	 * @param paragraphs
 	 * @param expConfig
 	 * @return
@@ -559,14 +583,14 @@ public class FocusJobs {
 			List<ClassifyUnit> testSet = testSets.getTestSet();
 			// System.out.println("Get Model...");
 			Model model = getModelForClassifier(trainingSet, expConfig);
-			
-//			System.out.println("Extract Study Subjects...");
+
+			// System.out.println("Extract Study Subjects...");
 			testSet = extractStudySubjects(testSet, expConfig, model);
-			
-//			System.out.println("Extract Degrees...");
+
+			// System.out.println("Extract Degrees...");
 			testSet = extractDegrees(testSet, expConfig, model);
 
-//			 System.out.println("Classify...");
+			// System.out.println("Classify...");
 			classified.putAll(classify(testSet, expConfig, model));
 		}
 
@@ -575,46 +599,48 @@ public class FocusJobs {
 
 	/**
 	 * evaluates the classified Job Ads with the given categories
+	 * 
 	 * @param classified
 	 * @param categories
 	 * @param expConfig
 	 * @return
 	 */
-	public Map<String,MLExperimentResult> evaluateML(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> categories,
-			ExperimentConfiguration expConfig) {
-		
-		MLEvaluator evaluator = new MLEvaluator();
-//		FocusEvaluator evaluator = new FocusEvaluator();
-		Map<String, MLExperimentResult> results = evaluator.evaluate(classified, expConfig, categories, 
-				focusList, studyList, degreesList);
+	public Map<String, MLExperimentResult> evaluateML(Map<ClassifyUnit, Map<String, Boolean>> classified,
+			List<String> categories, ExperimentConfiguration expConfig) {
 
-//		MLExperimentResult er = new MLExperimentResult();
-//		er.setExperimentConfiguration(expConfig.toString());
-//		er.setHammingLoss(evaluator.getHammingLoss());
-//		er.setMaxLoss(evaluator.getMaxLoss());
-//		er.setOneError(evaluator.getOneError());
-//		er.setCoverage(evaluator.getCoverage());
-//		// er.setTotalCorrect(evaluator.getTotalCorrect());
-//		er.setNumberOfEvalData(classified.size());
-//		er.setAccuracy(evaluator.getOverallAccuracy());
-//		er.setF1Measure(evaluator.getOverallF1Score());
-//		er.setPrecision(evaluator.getOverallPrecision());
-//		er.setAverPrec(evaluator.getAverPrec());
-//		er.setAverRec(evaluator.getAverRec());
-//		er.setAverF1(evaluator.getAverF1());
-//		er.setClassificationAccuracy(evaluator.getClassAccuracy());
-//		er.setRecall(evaluator.getOverallRecall());
-//		er.setTN(evaluator.getOverallTNs());
-//		er.setTP(evaluator.getOverallTPs());
-//		er.setFN(evaluator.getOverallFNs());
-//		er.setFP(evaluator.getOverallFPs());
-//		er.setMisClassified(evaluator.getMisclassified());
-//		er.setMLCategoryEvaluations(evaluator.getCategoryEvaluations());
+		MLEvaluator evaluator = new MLEvaluator();
+		// FocusEvaluator evaluator = new FocusEvaluator();
+		Map<String, MLExperimentResult> results = evaluator.evaluate(classified, expConfig, categories, focusList,
+				studyList, degreesList);
+
+		// MLExperimentResult er = new MLExperimentResult();
+		// er.setExperimentConfiguration(expConfig.toString());
+		// er.setHammingLoss(evaluator.getHammingLoss());
+		// er.setMaxLoss(evaluator.getMaxLoss());
+		// er.setOneError(evaluator.getOneError());
+		// er.setCoverage(evaluator.getCoverage());
+		// // er.setTotalCorrect(evaluator.getTotalCorrect());
+		// er.setNumberOfEvalData(classified.size());
+		// er.setAccuracy(evaluator.getOverallAccuracy());
+		// er.setF1Measure(evaluator.getOverallF1Score());
+		// er.setPrecision(evaluator.getOverallPrecision());
+		// er.setAverPrec(evaluator.getAverPrec());
+		// er.setAverRec(evaluator.getAverRec());
+		// er.setAverF1(evaluator.getAverF1());
+		// er.setClassificationAccuracy(evaluator.getClassAccuracy());
+		// er.setRecall(evaluator.getOverallRecall());
+		// er.setTN(evaluator.getOverallTNs());
+		// er.setTP(evaluator.getOverallTPs());
+		// er.setFN(evaluator.getOverallFNs());
+		// er.setFP(evaluator.getOverallFPs());
+		// er.setMisClassified(evaluator.getMisclassified());
+		// er.setMLCategoryEvaluations(evaluator.getCategoryEvaluations());
 		return results;
 	}
 
 	/**
 	 * serializes the given ExperimentResults
+	 * 
 	 * @param ers
 	 * @param outputFolder
 	 * @return
@@ -659,6 +685,7 @@ public class FocusJobs {
 
 	/**
 	 * serializes the given ExperimentResult
+	 * 
 	 * @param er
 	 * @param outputFolder
 	 * @return
@@ -692,6 +719,7 @@ public class FocusJobs {
 
 	/**
 	 * combines the result of pre-classifier and classifier
+	 * 
 	 * @param classified
 	 * @param preClassified
 	 * @return
@@ -741,8 +769,8 @@ public class FocusJobs {
 	}
 
 	/**
-	 * analyzes the trainingData in terms of label distributions
-	 * and label combinations.
+	 * analyzes the trainingData in terms of label distributions and label
+	 * combinations.
 	 * 
 	 * @param data
 	 * @return String with results
@@ -862,6 +890,7 @@ public class FocusJobs {
 
 	/**
 	 * exports evaluation results to .xlsx-File
+	 * 
 	 * @param results
 	 * @param folder
 	 * @throws IOException
@@ -882,7 +911,7 @@ public class FocusJobs {
 		headRow[10] = "hloss";
 		headRow[11] = "oer";
 		headRow[12] = "cov";
-		
+
 		headRow[13] = "Classifier";
 		headRow[14] = "Distance";
 		headRow[15] = "Quantifier";
@@ -891,7 +920,6 @@ public class FocusJobs {
 		headRow[18] = "NoStopwords";
 		headRow[19] = "Normalized";
 		headRow[20] = "Stemmed";
-		
 
 		if (!folder.exists()) {
 			folder.mkdirs();
@@ -902,7 +930,7 @@ public class FocusJobs {
 		if (!file.exists()) {
 			file.createNewFile();
 		}
-		
+
 		XSSFWorkbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet("Misclassified");
 		int r = 0;
@@ -914,11 +942,10 @@ public class FocusJobs {
 			cell.setCellValue(headRow[i]);
 		}
 
-
 		for (ExperimentResult result : results) {
 			MLExperimentResult mer = (MLExperimentResult) result;
 			row = sheet.createRow(r++);
-			
+
 			row = Util.createRow(mer, row);
 
 		}
@@ -926,6 +953,44 @@ public class FocusJobs {
 		wb.write(fos);
 		wb.close();
 
+	}
+
+	public File createCSV(String label, List<ClassifyUnit> jobAds, String path) throws IOException {
+
+		File csv = new File(path);
+		if (!csv.exists()) {
+			csv.getParentFile().mkdirs();
+			csv.createNewFile();
+		}
+		System.out.println(label);
+		System.out.println("Batch Size: " + jobAds.size());
+		System.out.println("numClasses: 12");
+		System.out.println("Label Index: " + jobAds.get(0).getFeatureVector().length);
+
+		FileWriter fw = new FileWriter(csv);
+		for (ClassifyUnit jobAd : jobAds) {
+			double[] featureValues = jobAd.getFeatureVector();
+			Map<String, Boolean> currLabels = ((FocusClassifyUnit) jobAd).getInFocus();
+			// write feature values
+			for (int i = 0; i < featureValues.length; i++) {
+				String value = String.valueOf(featureValues[i]);
+				fw.write(value + ",");
+			}
+			// write labels
+			StringBuilder sb = new StringBuilder();
+
+			if (currLabels.get(label))
+				sb.append("1");
+			else
+				sb.append("0");
+
+			fw.write(sb.toString() + "\n");
+
+		}
+		fw.flush();
+		fw.close();
+
+		return csv;
 	}
 
 }

@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.uni_koeln.spinfo.classification.core.data.ClassifyUnit;
 import de.uni_koeln.spinfo.classification.core.data.ExperimentConfiguration;
 import de.uni_koeln.spinfo.ml_classification.classifiers.KeywordClassifier;
-import de.uni_koeln.spinfo.ml_classification.data.FocusClassifyUnit;
 import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
 
 
@@ -56,6 +56,19 @@ public class FocusSingleExperimentExecutor {
 		// preclassify
 		// analyze focus combinations
 //		Map<Map<String, Boolean>, Integer> combiCount = Evaluator.analyzeCombinations(paragraphs, 1);
+		
+		//TODO delete EXPORT DATA TO CSV
+		Set<String> focuses = jobs.getFocuses();
+		for (String string : focuses) {
+			jobs.createCSV(string, paragraphs, "ml_classification/csvs/" + string + ".txt");
+		}
+		
+		
+		
+		//END
+		
+		
+		
 
 		Map<ClassifyUnit, Map<String, Double>> preClassified = new HashMap<ClassifyUnit, Map<String, Double>>();
 		if (preClassify) {
