@@ -58,10 +58,10 @@ public class FocusSingleExperimentExecutor {
 //		Map<Map<String, Boolean>, Integer> combiCount = Evaluator.analyzeCombinations(paragraphs, 1);
 		
 		//TODO delete EXPORT DATA TO CSV
-		Set<String> focuses = jobs.getFocuses();
-		for (String string : focuses) {
-			jobs.createCSV(string, paragraphs, "ml_classification/csvs/" + string + ".txt");
-		}
+//		Set<String> focuses = jobs.getFocuses();
+//
+//			jobs.createCSV(focuses, paragraphs, "ml_classification/featurevectors.txt");
+
 		
 		
 		

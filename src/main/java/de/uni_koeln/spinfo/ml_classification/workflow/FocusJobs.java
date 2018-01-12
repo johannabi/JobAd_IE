@@ -67,6 +67,7 @@ public class FocusJobs {
 	protected Map<String, List<String>> focusKeywords, studyKeywords, degreeKeywords;
 	/* Set of all Tokens in the Corpus */
 	protected Set<String> allTokens = new HashSet<String>();
+	private List<String> featureUnitOrder = new ArrayList<String>();
 	private List<String> focusList, studyList, degreesList;
 	MutualInformationFilter mi_filter = new MutualInformationFilter();
 	private boolean allowEmptyLabelMap = true;
@@ -264,6 +265,8 @@ public class FocusJobs {
 		if (fq != null) {
 			fq.setFeatureValues(trainingData, featureUnitOrder);
 		}
+		
+		this.featureUnitOrder = fq.getFeatureUnitOrder();
 
 		return trainingData;
 	}
@@ -575,6 +578,7 @@ public class FocusJobs {
 		// classify..
 		Map<ClassifyUnit, Map<String, Boolean>> classified = new HashMap<ClassifyUnit, Map<String, Boolean>>();
 
+		int index = 1;
 		while (iterator.hasNext()) {
 			// System.out.println("CrossValidation: ");
 			TrainingTestSets<ClassifyUnit> testSets = iterator.next();
@@ -592,6 +596,12 @@ public class FocusJobs {
 
 			// System.out.println("Classify...");
 			classified.putAll(classify(testSet, expConfig, model));
+			
+			//TODO delete export to csv
+			createCSV(focusKeywords.keySet(), testSet, "mlclassification/testvectors" + index + ".txt");
+			createCSV(focusKeywords.keySet(), trainingSet, "mlclassification/trainingvectors" + index + ".txt");
+			index++;
+			//
 		}
 
 		return classified;
@@ -955,19 +965,31 @@ public class FocusJobs {
 
 	}
 
-	public File createCSV(String label, List<ClassifyUnit> jobAds, String path) throws IOException {
+	public File createCSV(Set<String> labels, List<ClassifyUnit> jobAds, String path) throws IOException {
 
 		File csv = new File(path);
 		if (!csv.exists()) {
 			csv.getParentFile().mkdirs();
 			csv.createNewFile();
 		}
-		System.out.println(label);
-		System.out.println("Batch Size: " + jobAds.size());
-		System.out.println("numClasses: 12");
-		System.out.println("Label Index: " + jobAds.get(0).getFeatureVector().length);
+		System.out.println(featureUnitOrder.size() + " feature units");
+		System.out.println(jobAds.get(0).getFeatureVector().length + " values");
+		System.out.println(labels.size() + " labels");
+		System.out.println(jobAds.size() + " vectors");
+		
 
 		FileWriter fw = new FileWriter(csv);
+		StringBuilder headline = new StringBuilder();
+		//headline
+		for (String fu : featureUnitOrder) {
+			headline.append(fu + ",");
+		}
+		for (String label : labels) {
+			headline.append(label + ",");
+		}
+		fw.write(headline.substring(0, headline.length()-1));
+		fw.write("\n");
+		//vectors
 		for (ClassifyUnit jobAd : jobAds) {
 			double[] featureValues = jobAd.getFeatureVector();
 			Map<String, Boolean> currLabels = ((FocusClassifyUnit) jobAd).getInFocus();
@@ -978,13 +1000,13 @@ public class FocusJobs {
 			}
 			// write labels
 			StringBuilder sb = new StringBuilder();
-
+			for(String label : labels) {
 			if (currLabels.get(label))
-				sb.append("1");
+				sb.append("1,");
 			else
-				sb.append("0");
-
-			fw.write(sb.toString() + "\n");
+				sb.append("0,");
+			}
+			fw.write(sb.substring(0, sb.length()-1) + "\n");
 
 		}
 		fw.flush();

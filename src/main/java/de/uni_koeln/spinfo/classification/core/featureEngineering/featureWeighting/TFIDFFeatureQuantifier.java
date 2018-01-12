@@ -17,6 +17,7 @@ public class TFIDFFeatureQuantifier extends AbstractFeatureQuantifier{
 	
 	@Override
 	public void setFeatureValues(List<ClassifyUnit> classifyUnits, List<String> featureUnitOrder){
+		
 		this.featureUnitOrder = featureUnitOrder;
 		if(featureUnitOrder==null){
 			this.featureUnitOrder = getFeatureUnitOrder(classifyUnits);
@@ -37,7 +38,7 @@ public class TFIDFFeatureQuantifier extends AbstractFeatureQuantifier{
 				}
 				vector[i++] = tfidf;
 			}
-			
+
 			unitToClassify.setFeatureVector(vector);
 		}
 	
