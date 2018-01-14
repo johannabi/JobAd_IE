@@ -57,18 +57,6 @@ public class FocusSingleExperimentExecutor {
 		// analyze focus combinations
 //		Map<Map<String, Boolean>, Integer> combiCount = Evaluator.analyzeCombinations(paragraphs, 1);
 		
-		//TODO delete EXPORT DATA TO CSV
-//		Set<String> focuses = jobs.getFocuses();
-//
-//			jobs.createCSV(focuses, paragraphs, "ml_classification/featurevectors.txt");
-
-		
-		
-		
-		//END
-		
-		
-		
 
 		Map<ClassifyUnit, Map<String, Double>> preClassified = new HashMap<ClassifyUnit, Map<String, Double>>();
 		if (preClassify) {

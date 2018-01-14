@@ -120,11 +120,13 @@ public class FocusEvaluator {
 	 */
 	public void evaluate(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> categories,
 			List<String> focusList) {
+		
 		if (categories == null) {
 			evaluate(classified, focusList);
 			return;
 		}
 		numberOfClasses = ((FocusClassifyUnit) classified.keySet().iterator().next()).getInFocus().size();
+//		System.out.println(numberOfClasses + " Focuses");
 		this.categoryResults = new ArrayList<MLCategoryResult>();
 		for (int i = 0; i < focusList.size(); i++) {
 			MLCategoryResult catEv = new MLCategoryResult(i + 1, focusList.get(i));
@@ -133,11 +135,13 @@ public class FocusEvaluator {
 
 		for (ClassifyUnit cu : classified.keySet()) {
 			Map<String, Boolean> goldClasses = ((FocusClassifyUnit) cu).getInFocus();
+			if(goldClasses.isEmpty())
+				continue;
 			Map<String, Boolean> predicted = classified.get(cu);
 			
 			if(goldClasses.equals(predicted))
 				classAccuracy++;
-
+			
 			List<Entry<String, Double>> rankedLabels = Util.sortByComparator(((FocusClassifyUnit) cu).getRanking());
 			int currentFP = 0;
 			int currentFN = 0;
@@ -214,6 +218,8 @@ public class FocusEvaluator {
 			int currentIndex = 0;
 			int cNumberOfLabels = 0;
 			for (Entry<String, Double> e : rankedLabels) {
+//				System.out.println(e.getKey());
+//				System.out.println(goldClasses.get(e.getKey()));
 				// lastIndex raises if rankedLabel is in gold standard
 				if (goldClasses.get(e.getKey())) {
 					cNumberOfLabels++;

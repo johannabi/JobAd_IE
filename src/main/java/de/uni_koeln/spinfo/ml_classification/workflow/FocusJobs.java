@@ -578,7 +578,6 @@ public class FocusJobs {
 		// classify..
 		Map<ClassifyUnit, Map<String, Boolean>> classified = new HashMap<ClassifyUnit, Map<String, Boolean>>();
 
-		int index = 1;
 		while (iterator.hasNext()) {
 			// System.out.println("CrossValidation: ");
 			TrainingTestSets<ClassifyUnit> testSets = iterator.next();
@@ -596,12 +595,6 @@ public class FocusJobs {
 
 			// System.out.println("Classify...");
 			classified.putAll(classify(testSet, expConfig, model));
-			
-			//TODO delete export to csv
-			createCSV(focusKeywords.keySet(), testSet, "mlclassification/testvectors" + index + ".txt");
-			createCSV(focusKeywords.keySet(), trainingSet, "mlclassification/trainingvectors" + index + ".txt");
-			index++;
-			//
 		}
 
 		return classified;
@@ -964,19 +957,15 @@ public class FocusJobs {
 		wb.close();
 
 	}
+	
 
-	public File createCSV(Set<String> labels, List<ClassifyUnit> jobAds, String path) throws IOException {
+	public File createCSV(String labelType, Set<String> labels, List<ClassifyUnit> jobAds, String path) throws IOException {
 
 		File csv = new File(path);
 		if (!csv.exists()) {
 			csv.getParentFile().mkdirs();
 			csv.createNewFile();
 		}
-		System.out.println(featureUnitOrder.size() + " feature units");
-		System.out.println(jobAds.get(0).getFeatureVector().length + " values");
-		System.out.println(labels.size() + " labels");
-		System.out.println(jobAds.size() + " vectors");
-		
 
 		FileWriter fw = new FileWriter(csv);
 		StringBuilder headline = new StringBuilder();
@@ -992,7 +981,13 @@ public class FocusJobs {
 		//vectors
 		for (ClassifyUnit jobAd : jobAds) {
 			double[] featureValues = jobAd.getFeatureVector();
-			Map<String, Boolean> currLabels = ((FocusClassifyUnit) jobAd).getInFocus();
+			Map<String, Boolean> currLabels = null;
+			if(labelType.equals("Focus"))
+				currLabels = ((FocusClassifyUnit) jobAd).getInFocus();
+			else if (labelType.equals("StudySubject"))
+				currLabels = ((FocusClassifyUnit) jobAd).getStudySubjects();
+			else if (labelType.equals("Degree"))
+				currLabels = ((FocusClassifyUnit) jobAd).getDegrees();
 			// write feature values
 			for (int i = 0; i < featureValues.length; i++) {
 				String value = String.valueOf(featureValues[i]);

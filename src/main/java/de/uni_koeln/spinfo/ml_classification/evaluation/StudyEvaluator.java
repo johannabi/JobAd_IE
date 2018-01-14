@@ -98,6 +98,7 @@ public class StudyEvaluator {
 	public void evaluate(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> studyList) {
 		numberOfClasses = ((FocusClassifyUnit) classified.keySet().iterator().
 				next()).getExtractedStudies().size();
+		
 
 		List<String> classesList = new ArrayList<String>();
 		for (int i = 0; i < numberOfClasses; i++) {
@@ -122,7 +123,8 @@ public class StudyEvaluator {
 			return;
 		}
 		numberOfClasses = ((FocusClassifyUnit) classified.keySet().iterator().next()).getExtractedStudies().size();
-				
+//		System.out.println(numberOfClasses + " Studies");
+		
 		this.categoryResults = new ArrayList<MLCategoryResult>();
 		for (int i = 0; i < studyList.size(); i++) {
 			MLCategoryResult catEv = new MLCategoryResult(i + 1, studyList.get(i));
@@ -131,6 +133,8 @@ public class StudyEvaluator {
 //		int printFP = 0;
 		for (ClassifyUnit cu : classified.keySet()) {
 			Map<String, Boolean> goldClasses = ((FocusClassifyUnit) cu).getStudySubjects();
+			if(goldClasses==null)
+				continue;
 			Map<String, Boolean> predicted = ((FocusClassifyUnit) cu).getExtractedStudies();
 			//TODO Gold = groß; Predicted = klein
 //			System.out.println(goldClasses);

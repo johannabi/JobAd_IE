@@ -76,12 +76,13 @@ public class TrainingUnitCreator {
 	 */
 	public List<FocusClassifyUnit> getTrainingData(Boolean safeUnused) throws IOException {
 
+		System.out.println(trainingFile.getAbsolutePath());
 		focusKeys = setKeys(focusesFile);
 		studiesKeys = setKeys(studiesFile);
 		degreesKeys = setKeys(degreesFile);
 
 		if (classifiedData.isEmpty()) {
-
+			System.out.println("Read new Data");
 			FileInputStream fis = new FileInputStream(trainingFile);
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet sheet = wb.getSheetAt(0);
@@ -99,6 +100,8 @@ public class TrainingUnitCreator {
 				String degreesString = r.getCell(4).getStringCellValue();
 				FocusClassifyUnit fcu = new FocusClassifyUnit(title, titleContent, contentHTML);
 
+				
+				
 				Set<String> inFocusSet = splitIntoPieces(focusString);
 				Set<String> studiesSet = splitIntoPieces(studySubjectsString);
 				Set<String> degreesSet = splitIntoPieces(degreesString);
@@ -112,6 +115,7 @@ public class TrainingUnitCreator {
 
 				fcu.setStudySubjects(studies);
 				fcu.setDegrees(degrees);
+				
 
 				if (!inFocus.containsValue(true)) { // TODO was, wenn Focus,
 													// aber keine Studienfächer?
@@ -119,6 +123,7 @@ public class TrainingUnitCreator {
 					noFocus.add(fcu);
 
 				} else {
+					
 					fcu.setInFocus(inFocus);
 					classifiedData.add(fcu);
 				}
@@ -130,7 +135,7 @@ public class TrainingUnitCreator {
 				Util.exportUnitstoXLSX("notUsedData.xlsx", noFocus);
 
 		}
-
+		
 		return classifiedData;
 
 	}
@@ -209,6 +214,7 @@ public class TrainingUnitCreator {
 
 	private Map<String, Boolean> setLabels(Set<String> posLabels, Set<String> allLabels) {
 		Map<String, Boolean> labels = new HashMap<String, Boolean>();
+		
 		// if (!posLabels.isEmpty()) {
 		// creates Map of focuses the unit belongs to (or not)
 		for (String focus : allLabels) {

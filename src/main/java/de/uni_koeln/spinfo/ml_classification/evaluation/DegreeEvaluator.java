@@ -120,19 +120,18 @@ public class DegreeEvaluator {
 			return;
 		}
 		numberOfClasses = ((FocusClassifyUnit) classified.keySet().iterator().next()).getExtractedDegrees().size();
-				
+//		System.out.println(numberOfClasses + " Degrees");
+		
 		this.categoryResults = new ArrayList<MLCategoryResult>();
 		for (int i = 0; i < degreeList.size(); i++) {
 			MLCategoryResult catEv = new MLCategoryResult(i + 1, degreeList.get(i));
 			categoryResults.add(catEv);
 		}
-		int printFP = 0;
 		for (ClassifyUnit cu : classified.keySet()) {
 			Map<String, Boolean> goldClasses = ((FocusClassifyUnit) cu).getDegrees();
+			if(goldClasses==null)
+				continue;
 			Map<String, Boolean> predicted = ((FocusClassifyUnit) cu).getExtractedDegrees();
-			//TODO Gold = groß; Predicted = klein
-//			System.out.println(goldClasses);
-//			System.out.println(predicted);
 			
 			if(goldClasses.equals(predicted))
 				classAccuracy++;
@@ -145,9 +144,10 @@ public class DegreeEvaluator {
 			int intersection = 0;
 			int goldLabels = 0;
 			int predictLabels = 0;
+
 			for (int i = 0; i < numberOfClasses; i++) {
 				String currentLabel = degreeList.get(i);
-				
+
 				// compute tp, tn, fp, fn
 				if (goldClasses.get(currentLabel)) {
 					goldLabels++;
@@ -162,13 +162,6 @@ public class DegreeEvaluator {
 							overallFNs++;
 						categoryResults.get(i).raiseFN();
 						currentFN++;
-//						printFP++;
-//						if(printFP < 12){
-//							System.out.println("Gold: " + goldClasses);
-//							System.out.println("Predicted: " + predicted);
-//							System.out.println(cu.getContent());
-//							System.out.println("----------------------------------");
-//						}
 					}
 				} else {
 					if (!predicted.get(currentLabel)) {
@@ -212,37 +205,16 @@ public class DegreeEvaluator {
 				maxLoss = currentLoss;
 			hammingLoss = hammingLoss + ((double) currentLoss / (double) numberOfClasses);
 
-			// one error: gets most probable label and counts if it isn't in
-			// gold standard
-//			String mostProbLabel = rankedLabels.get(0).getKey();
-//
-//			if (!goldClasses.get(mostProbLabel))
-//				oneError++;
-			Set<String> toComplete = new HashSet<String>();
-			int lastIndex = 0;
-			int currentIndex = 0;
 			int cNumberOfLabels = 0;
-//			for (Entry<String, Double> e : rankedLabels) {
-//				// lastIndex raises if rankedLabel is in gold standard
-//				if (goldClasses.get(e.getKey())) {
-//					cNumberOfLabels++;
-//					toComplete.add(e.getKey());
-//					lastIndex = currentIndex;
-//				}
-//				currentIndex++;
-//			}
 			Integer count = 0;
+			
 			if (distGold.containsKey(cNumberOfLabels))
 				count = distGold.get(cNumberOfLabels);
 			distGold.put(cNumberOfLabels, count + 1);
 
-//			coverage = coverage + lastIndex + 1;
-
 		}
 
 		hammingLoss = hammingLoss / (double) classified.size();
-//		oneError = oneError / (double) classified.size();
-//		coverage = coverage / (double) classified.size();
 		averPrec = averPrec / (double) classified.size();
 		averRec = averRec / (double) classified.size();
 		averF1 = averF1 / (double) classified.size();
