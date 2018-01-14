@@ -959,7 +959,7 @@ public class FocusJobs {
 	}
 	
 
-	public File createCSV(String labelType, Set<String> labels, List<ClassifyUnit> jobAds, String path) throws IOException {
+	public File createCSV(String labelType, List<String> focusLabels, List<ClassifyUnit> jobAds, String path) throws IOException {
 
 		File csv = new File(path);
 		if (!csv.exists()) {
@@ -973,7 +973,7 @@ public class FocusJobs {
 		for (String fu : featureUnitOrder) {
 			headline.append(fu + ",");
 		}
-		for (String label : labels) {
+		for (String label : focusLabels) {
 			headline.append(label + ",");
 		}
 		fw.write(headline.substring(0, headline.length()-1));
@@ -995,7 +995,7 @@ public class FocusJobs {
 			}
 			// write labels
 			StringBuilder sb = new StringBuilder();
-			for(String label : labels) {
+			for(String label : focusLabels) {
 			if (currLabels.get(label))
 				sb.append("1,");
 			else
