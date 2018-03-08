@@ -144,8 +144,6 @@ public class FocusJobs {
 		studyList = new ArrayList<String>(studyKeywords.keySet());
 		degreesList = new ArrayList<String>(degreeKeywords.keySet());
 
-		// TODO hier ist studyList vollständig
-
 		toReturn.addAll(fcus);
 		if (treatEncoding) {
 			for (ClassifyUnit classifyUnit : toReturn) {

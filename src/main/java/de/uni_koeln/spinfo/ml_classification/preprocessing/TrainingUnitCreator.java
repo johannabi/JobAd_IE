@@ -76,7 +76,6 @@ public class TrainingUnitCreator {
 	 */
 	public List<FocusClassifyUnit> getTrainingData(Boolean safeUnused) throws IOException {
 
-		System.out.println(trainingFile.getAbsolutePath());
 		focusKeys = setKeys(focusesFile);
 		studiesKeys = setKeys(studiesFile);
 		degreesKeys = setKeys(degreesFile);

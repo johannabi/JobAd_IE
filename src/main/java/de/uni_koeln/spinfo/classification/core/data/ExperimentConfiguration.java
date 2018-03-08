@@ -20,10 +20,10 @@ public class ExperimentConfiguration implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private FeatureUnitConfiguration fuc;
-	private AbstractFeatureQuantifier fq;
-	private AbstractClassifier classifier;
-	private File dataFile;
+	protected FeatureUnitConfiguration fuc; //TODO protected?
+	protected AbstractFeatureQuantifier fq;
+	protected AbstractClassifier classifier;
+	protected File dataFile;
 	/**
 	 * unique model-filename for this experiment 
 	 */
@@ -49,6 +49,16 @@ public class ExperimentConfiguration implements Serializable {
 		this.classifier = classifier;
 		this.dataFile = dataFile;
 		this.outputFolder = outputFolder;
+	}
+	
+	public ExperimentConfiguration(FeatureUnitConfiguration fuc,
+			AbstractFeatureQuantifier fq,
+			File dataFile) {
+		super();
+		this.fuc = fuc;
+		this.fq = fq;
+		this.dataFile = dataFile;
+		
 	}
 
 	/**

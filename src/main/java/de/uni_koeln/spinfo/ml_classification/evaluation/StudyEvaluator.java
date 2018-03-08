@@ -117,7 +117,7 @@ public class StudyEvaluator {
 	public void evaluate(Map<ClassifyUnit, Map<String, Boolean>> classified, List<String> categories,
 			List<String> studyList) {
 		
-		System.out.println(studyList);
+//		System.out.println(studyList);
 
 		
 		if (categories == null) {

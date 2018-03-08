@@ -19,6 +19,7 @@ import de.uni_koeln.spinfo.classification.core.featureEngineering.featureWeighti
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.CategoryResult;
 import de.uni_koeln.spinfo.classification.zoneAnalysis.data.ExperimentResult;
 import de.uni_koeln.spinfo.ml_classification.classifiers.FocusAbstractClassifier;
+import de.uni_koeln.spinfo.ml_classification.classifiers.FocusMLKNNClassifier;
 import de.uni_koeln.spinfo.ml_classification.classifiers.FocusNaiveBayesClassifier;
 import de.uni_koeln.spinfo.ml_classification.data.MLCategoryResult;
 import de.uni_koeln.spinfo.ml_classification.data.MLExperimentResult;
@@ -59,8 +60,8 @@ public class SingleExperimentExecution {
 	static Distance distance = Distance.COSINUS;
 	static double threshold = 0.5;
 	static boolean allowEmptyLabelMap = true;
-	static FocusAbstractClassifier classifier = new FocusNaiveBayesClassifier(threshold);
-//	static FocusAbstractClassifier classifier = new FocusMLKNNClassifier(knnValue, distance, threshold);
+//	static FocusAbstractClassifier classifier = new FocusNaiveBayesClassifier(threshold);
+	static FocusAbstractClassifier classifier = new FocusMLKNNClassifier(knnValue, distance, threshold);
 	static AbstractFeatureQuantifier quantifier = new LogLikeliHoodFeatureQuantifier();
 //	static AbstractFeatureQuantifier quantifier = new TFIDFFeatureQuantifier();
 	static List<String> evaluationCategories = null;
